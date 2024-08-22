@@ -1,0 +1,214 @@
+* Difference between javascript and node js.
+
+    1. Execution Environment:
+
+        JavaScript: Runs in the browser.
+        Node.js: Runs on the server.
+
+    2. Use Case:
+
+        JavaScript: Primarily for client-side web development.
+        Node.js: For server-side and full-stack development.
+
+    3. Built-in Features:
+
+        JavaScript: DOM manipulation, event handling, and interaction with the browser.
+        Node.js: File system access, server creation, networking capabilities, and extensive use of npm modules.
+
+    4. Modules and Libraries:
+
+        JavaScript: Uses ES6 modules and libraries included in the browser.
+        Node.js: Uses CommonJS modules and the extensive npm ecosystem for additional functionality.
+
+    5. Asynchronous Programming:
+
+        Both JavaScript and Node.js support asynchronous programming, but Node.js is specifically designed with a non-blocking, event-driven architecture that makes it well-suited for building scalable network applications.
+
+
+* Asynchronous Programming:
+
+    Asynchronous programming is a programming paradigm that allows a program to start a potentially time-consuming task (such as reading a file, fetching data from a server, or waiting for a timer) and move on to other tasks before the first task finishes. When the task completes, the program is notified and can then process the results. This approach helps to keep the program responsive, especially in environments like web browsers where blocking operations can lead to poor user experiences.
+
+
+* Node.js is a Runtime Environment :
+
+    A runtime environment provides the infrastructure needed for programs to execute. It includes the necessary services and resources, such as memory management, input/output operations, and other system calls that the program relies on to function.
+    Node.js is a runtime environment because it provides everything necessary to execute JavaScript code outside of a browser. It includes the V8 JavaScript engine (which compiles and executes JavaScript code) and additional libraries and APIs that allow JavaScript to perform tasks like file system operations, network communications, and more. This makes it possible to use JavaScript for server-side scripting and full-stack development.
+
+
+* npm Module:
+    An npm module is a package of code that can be reused across different Node.js projects. The npm (Node Package Manager) registry hosts thousands of modules that developers can install and use in their applications. These modules provide a wide range of functionality, from simple utilities to full-fledged frameworks.
+
+
+* Asynchronous programming vs threading: 
+    
+    Asynchronous programming and threading are both techniques used to handle tasks that may take a significant amount of time to complete without blocking the main program's execution. However, they are fundamentally different concepts with different implementations and use cases. 
+
+    Asynchronous programming- involves writing code that can start a task and then continue executing other code while waiting for the task to complete. When the task is done, the program is notified, and a callback function, promise, or async/await structure handles the result. In JavaScript (especially in the browser and Node.js), asynchronous operations are usually handled using callbacks, promises, or the async/await syntax. Asynchronous programming is typically single-threaded and leverages event loops to manage operations. For example, JavaScript's runtime environment handles asynchronous operations using an event loop that processes tasks in the order they complete. Asynchronous programming is ideal for I/O-bound tasks where the main goal is to keep the application responsive while waiting for external operations to complete.
+
+    Threading- involves running multiple threads (smaller units of a process) concurrently. Each thread can execute code independently, allowing multiple tasks to be performed simultaneously. Threading is often managed by the operating system and can be multi-threaded (using multiple cores of a CPU) or single-threaded (time-slicing CPU resources among threads). In languages like Java or Python, threads can be created and managed to perform concurrent operations. Threading is better suited for CPU-bound tasks where actual parallel execution can provide performance benefits.
+
+
+/* Some notes are in your notebook */
+
+* Document: When a member returns an object of type document (e.g., the ownerDocument property of an element returns the document to which it belongs), this object is the root document object itself. 
+
+* Node: Every object located within a document is a node of some kind. In an HTML document, an object can be an element node but also a text node or attribute node.
+
+* Element: The element type is based on node. It refers to an element or a node of type element returned by a member of the DOM API. Rather than saying, for example, that the document.createElement() method returns an object reference to a node, we just say that this method returns the element that has just been created in the DOM. element objects implement the DOM Element interface and also the more basic Node interface, both of which are included together in this reference.
+
+    
+* DOM Interfaces
+
+    The object representing the HTML form element gets its name property from the HTMLFormElement interface but its className property from the HTMLElement interface. In both cases, the property you want is in that form object.
+
+
+* Interfaces and objects
+
+    Many objects implement several different interfaces. The table object, for example, implements a specialized HTMLTableElement interface, which includes such methods as createCaption and insertRow.
+
+* Core interfaces in the DOM
+    
+    The document and window objects are the objects whose interfaces you generally use most often in DOM programming. In simple terms, the window object represents something like the browser, and the document object is the root of the document itself. Element inherits from the generic Node interface, and together these two interfaces provide many of the methods and properties you use on individual elements. These elements may also have specific interfaces for dealing with the kind of data those elements hold, as in the table object.
+    
+    common APIs in web and XML page scripting using the DOM:-
+        
+        -document.querySelector()
+        -document.querySelectorAll()
+        -document.createElement()
+        -Element.innerHTML
+        -Element.setAttribute()
+        -Element.getAttribute()
+        -EventTarget.addEventListener()
+        -TMLElement.style
+        -Node.appendChild()
+        -window.onload
+        -window.scrollTo()
+
+* How each is defined
+
+    -Document.querySelector() to access the <div> and the buttons
+    -EventTarget.addEventListener() to listen for button clicks
+    -Document.createElement to create the element
+    -Node.appendChild() to add the child
+    -Node.removeChild() to remove the child.
+
+    What comes in Document, EventTarget, Node may depend upon the way you select those elements.
+
+        eg:  const setText = document.body.querySelector("#set-text");
+             setText.addEventListener(type, listener);
+        Here, document.body is the Document
+        setText is the EventTarget
+
+
+* Document Object Model:
+
+    The Document Object Model (DOM) is an API for manipulating DOM trees of HTML and XML documents (among other tree-like documents). This API is at the root of the description of a page and serves as a base for scripting on the web.
+    
+    (i) DOM tree:
+
+            A DOM tree is a tree structure whose nodes represent an HTML or XML document's contents. Each HTML or XML document has a DOM tree representation.
+
+
+* What does the Document API do?:
+
+    The Document API, also sometimes called the DOM API, allows you to modify a DOM tree in any way you want. It enables you to create any HTML or XML document from scratch or to change any contents of a given HTML or XML document. Web page authors can edit the DOM of a document using JavaScript to access the document property of the global object. This document object implements the Document interface.
+
+* Creating TextNodes with document.createTextNode(".."):
+
+    Use the document object to invoke the createTextNode method and create your text node. You just need to pass the text content. The return value is an object that represents the text node.
+
+    eg: myTextNode = document.createTextNode("world");
+    This means that you have created a node of the type TEXT_NODE (a piece of text) whose text data is "world", and myTextNode is your reference to this node object. To insert this text into your HTML page, you need to make this text node a child of some other node element.
+
+* Inserting Elements with appendChild(..):
+    by calling secondParagraph.appendChild(node_element), you are making the element a new child of the second <p> element.
+    
+    eg: NodeName.appendChild(myTextNode);
+
+* Creating New Elements with the document object and the createElement(..) method:
+
+    You can create new HTML elements or any other element you want with createElement. For example, if you want to create a new <p> element as a child of the <body> element, you can use the myBody  and append a new element node. To create a node call document.createElement("tagname")
+
+
+* Removing nodes with the removeChild(..) method:
+    
+    Nodes can be removed using NodeName.removeChild()
+
+
+* Locating DOM elements using selectors:
+
+    The Selectors API provides methods that make it quick and easy to retrieve Element nodes from the DOM by matching against a set of selectors. This is much faster than past techniques, wherein it was necessary to, for example, use a loop in JavaScript code to locate the specific items you needed to find.
+
+    (i) querySelector():
+
+        Returns the first matching Element node within the node's subtree. If no matching node is found, null is returned.
+
+    (ii) querySelectorAll()
+Returns a NodeList containing all matching Element nodes within the node's subtree, or an empty NodeList if no matches are found.
+
+
+* Events:
+    Events are things that happen in the system you are programming — the system produces (or "fires") a signal of some kind when an event occurs, and provides a mechanism by which an action can be automatically taken (that is, some code running) when the event occurs. Events are fired inside the browser window, and tend to be attached to a specific item that resides in it. This might be a single element, a set of elements, the HTML document loaded in the current tab, or the entire browser window. There are many different types of events that can occur.
+    
+        -The user selects, clicks, or hovers the cursor over a certain element.
+        -The user chooses a key on the keyboard.
+        -The user resizes or closes the browser window.
+        -A web page finishes loading.
+        -A form is submitted.
+        -A video is played, paused, or ends.
+        -An error occurs.
+
+    To react to an event, you attach an event handler to it. This is a block of code (usually a JavaScript function that you as a programmer create) that runs when the event fires. When such a block of code is defined to run in response to an event, we say we are registering an event handler. Note: Event handlers are sometimes called event listeners — they are pretty much interchangeable for our purposes, although strictly speaking, they work together. The listener listens out for the event happening, and the handler is the code that is run in response to it happening.
+
+* Preventing default behavior:
+    Sometimes, you'll come across a situation where you want to prevent an event from doing what it does by default. The most common example is that of a web form, for example, a custom registration form. we implement a very simple check inside a handler for the submit event (the submit event is fired on a form when it is submitted) that tests whether the text fields are empty. If they are, we call the preventDefault() function on the event object — which stops the form submission — and then display an error message in the paragraph to tell the user what's wrong
+
+Events are not unique to JavaScript — most programming languages have some kind of event model, and the way the model works often differs from JavaScript's way. For example, Node.js is a very popular JavaScript runtime that enables developers to use JavaScript to build network and server-side applications. The Node.js event model relies on listeners to listen for events and emitters to emit events periodically — it doesn't sound that different, but the code is quite different, making use of functions like on() to register an event listener, and once() to register an event listener that unregisters after it has run once.
+    
+
+* Event bubling
+
+     Event Bubbling is a concept in the DOM (Document Object Model). It happens when an element receives an event, and that event bubbles up (or you can say is transmitted or propagated) to its parent and ancestor elements in the DOM tree until it gets to the root element.
+
+This is the default behavior of events on elements unless you stop the propagation
+
+* Fixing the problem with stopPropagation()
+
+    event bubbling can sometimes create problems, but there is a way to prevent it. The Event object has a function available on it called stopPropagation() which, when called inside an event handler, prevents the event from bubbling up to any other elements.
+
+
+* Event capture
+
+    An alternative form of event propagation is event capture. This is like event bubbling but the order is reversed: so instead of the event firing first on the innermost element targeted, and then on successively less nested elements, the event fires first on the least nested element, and then on successively more nested elements, until the target is reached.
+    Event capture is disabled by default. To enable it you have to pass the capture option in addEventListener().
+
+* Event delegation
+
+    Event bubbling enables event delegation. when we want some code to run when the user interacts with any one of a large number of child elements, we set the event listener on their parent and have events that happen on them bubble up to their parent rather than having to set the event listener on every child individually.
+
+
+* Target and currentTarget
+
+    we use two different properties of the event object to access the element that was clicked. In Setting a listener on a parent element we use event.currentTarget. However, in Event delegation, we use event.target.
+
+
+* Object
+
+    This can be anything. Everything in JavaScript is an object and can be stored in a variable. Keep this in mind as you learn.	let myVariable = document.querySelector('h1');
+All of the above examples too.
+
+Strict equality - ===
+
+
+
+
+
+
+
+
+
+
+
+
+
