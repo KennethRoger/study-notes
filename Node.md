@@ -39,7 +39,7 @@ res.setHeader('Content-Type', 'text/plain');
 res.end('Hello World\n');
 ```
 
-###Differences between Node.js and the Browser###
+### Differences between Node.js and the Browser ###
 
 In the browser, most of the time what you are doing is interacting with the DOM, or other Web Platform APIs like Cookies. Those do not exist in Node.js, of course. You don't have the **document**, **window** and all the other objects that are provided by the browser.
 
@@ -49,12 +49,12 @@ Another big difference is that in Node.js you control the environment.
 
 you can use both **require()** and **import** in Node.js, while you are limited to import in the browser.
 
-###the npm package manager##
+### the npm package manager ##
 
 **npm** is the standard package manager for Node.js.
 The difference between *devDependencies* and dependencies is that the former contains development tools, like a testing library, while the latter is bundled with the app in production. As for the *optionalDependencies* the difference is that build failure of the dependency will not cause installation to fail. But it is your program's responsibility to handle the lack of the dependency.
 
-###Running Tasks###
+### Running Tasks ###
 
 The package.json file supports a format for specifying command line tasks that can be run by using
 ```
@@ -77,7 +77,7 @@ $ npm run dev
 $ npm run prod
 ```
 
-###Asynchronous flow control###
+### Asynchronous flow control ###
 
 complex operations are made up of many functions:
 
@@ -114,7 +114,7 @@ function initiate() {
 
 initiate();
 ```
-##State management##
+## State management ##
 
 Functions may or may not be state dependent. State dependency arises when the input or other variable of a function relies on an outside function.
 
@@ -123,7 +123,7 @@ In this way there are two primary strategies for state management:
   1. passing in variables directly to a function, and
   2. acquiring a variable value from a cache, session, file, database, network, or other outside source.
 
-##Control flow##
+## Control flow ##
 
 If an object is available in memory, iteration is possible, and there will 
 not be a change to control flow:
@@ -303,7 +303,7 @@ sendOneMillionEmailsOnly();
 
 Each has its own use cases, benefits, and issues you can experiment and read about in more detail. Most importantly, remember to modularize your operations and use callbacks! If you feel any doubt, treat everything as if it were middleware!
 
-##Middleware##
+## Middleware ##
 
 In web development, particularly in the context of frameworks like Express.js, **middleware** refers to functions that sit in the middle of the request-response cycle. Middleware functions have access to the `request` object (`req`), the `response` object (`res`), and the next middleware function in the application’s request-response cycle. These functions can perform various tasks before passing control to the next middleware function or sending a response to the client.
 
@@ -380,7 +380,7 @@ app.listen(3000, () => {
 ```
 **"I/O" refers primarily to interaction with the system's disk and network supported by libuv**
 
-##Blocking##
+## Blocking ##
 
 **Blocking** is when the execution of additional JavaScript in the Node.js process must wait until a non-JavaScript operation completes. This happens because the event loop is unable to continue running JavaScript while a **blocking** operation is occurring.
 
@@ -392,7 +392,7 @@ The Node.js fs module provides an API to interact with the file system. It offer
 
  list of common file system operations in Node.js, with both their synchronous and asynchronous versions side by side:
 
-1. ###Reading a File###
+1. ### Reading a File ###
 
 * **Asynchronous (fs.readFile)**
 
@@ -412,7 +412,7 @@ const data = fs.readFileSync('example.txt', 'utf8');
 console.log(data);
 ```
 
-2. ###Writing to a File###
+2. ### Writing to a File ###
 
 * **Asynchronous (fs.writeFile)**
 
@@ -432,7 +432,7 @@ fs.writeFileSync('example.txt', 'Hello, world!');
 console.log('File written successfully');
 ```
 
-3. ###Appending to a File###
+3. ### Appending to a File ###
 
 * **Asynchronous (fs.appendFile)**
 
@@ -452,7 +452,7 @@ fs.appendFileSync('example.txt', ' This is appended text.');
 console.log('Text appended successfully');
 ```
 
-4. ###Deleting a File###
+4. ### Deleting a File ###
 
 * **Asynchronous (fs.unlink)**
 
@@ -472,7 +472,7 @@ fs.unlinkSync('example.txt');
 console.log('File deleted');
 ```
 
-5. ###Creating a Directory###
+5. ### Creating a Directory ###
 
 * **Asynchronous (fs.mkdir)**
 
@@ -492,7 +492,7 @@ fs.mkdirSync('newDir');
 console.log('Directory created');
 ```
 
-6. ###Removing a Directory###
+6. ### Removing a Directory ###
 
 * **Asynchronous (fs.rmdir)**
 
@@ -512,7 +512,7 @@ fs.rmdirSync('newDir');
 console.log('Directory removed');
 ```
 
-7. ###Checking if a File Exists###
+7. ### Checking if a File Exists ###
 
 * **Asynchronous (fs.access)**
 
@@ -531,7 +531,7 @@ const exists = fs.existsSync('example.txt');
 console.log(exists ? 'File exists' : 'File does not exist');
 ```
 
-8. ###Renaming a File or Directory###
+8. ### Renaming a File or Directory ###
 
 * **Asynchronous (fs.rename)**
 
@@ -551,7 +551,7 @@ fs.renameSync('oldName.txt', 'newName.txt');
 console.log('File renamed');
 ```
 
-9. ###Reading a Directory###
+9. ### Reading a Directory ###
 
 * **Asynchronous (fs.readdir)**
 
@@ -571,7 +571,7 @@ const files = fs.readdirSync('newDir');
 console.log(files);
 ```
 
-10. ###Watching a File for Changes###
+10. ### Watching a File for Changes ###
 
 * **Asynchronous (fs.watch)**
 
@@ -582,19 +582,19 @@ fs.watch('example.txt', (eventType, filename) => {
 });
 ```
 
-##Concurrency and Throughput##
+## Concurrency and Throughput ##
 
 JavaScript execution in Node.js is single threaded, so concurrency refers to the event loop's capacity to execute JavaScript callback functions after completing other work. Any code that is expected to run in a concurrent manner must allow the event loop to continue running as non-JavaScript operations, like I/O, are occurring.
 
 The event loop is different than models in many other languages where additional threads may be created to handle concurrent work.
 
-##Handling errors in callbacks##
+## Handling errors in callbacks ##
 
 One very common strategy is to use what Node.js adopted: the first parameter in any callback function is the error object: error-first callbacks
 
 If there is no error, the object is null. If there is an error, it contains some description of the error and other information.
 
-##What is the Event Loop?##
+## What is the Event Loop? ##
 
 The event loop is what allows Node.js to perform non-blocking I/O operations — despite the fact that a single JavaScript thread is used by default — by offloading operations to the system kernel whenever possible.
 
