@@ -1,11 +1,11 @@
-#DEEP LEARNING OF NODEJS#
+# DEEP LEARNING OF NODEJS #
 
-##NodeJS##
+## NodeJS ##
 
 Node.js runs the V8 JavaScript engine, the core of Google Chrome, outside of the browser. A Node.js app runs in a single process, without creating a new thread for every request. Node.js provides a set of asynchronous I/O primitives in its standard library that prevent JavaScript code from blocking.
 When Node.js performs an I/O operation, like reading from the network, accessing a database or the filesystem, instead of blocking the thread and wasting CPU cycles waiting, Node.js will resume the operations when the response comes back.
 
-###An Example Node.js Application###
+### An Example Node.js Application ###
 
 ```
 const { createServer } = require('node:http');
