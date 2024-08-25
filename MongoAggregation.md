@@ -262,6 +262,113 @@ cmd: blog> db.posts.aggregate([ { $group: { _id: "$author.nickname" } }] )
 out: [ { _id: 'emily23' }, { _id: 'bob1995' }, { _id: 'mikef' } ]
 ```
 
+## Array Update Operators in MongoDB ##
+
+### $push: ### Adds an element to an array. If the field is not an array, it creates the field as an array with the value as its element.
+
+Example: Add a single value to an array or use modifiers like $each, $slice, $sort, and $position to customize the behavior.
+```
+db.collection.updateOne(
+    { _id: 1 },
+    { $push: { scores: 89 } }
+)
+```
+
+### $pull: ### Removes all instances of a value or values that match a specified condition from an existing array.
+
+Example: Remove an element from an array.
+```
+db.collection.updateOne(
+    { _id: 1 },
+    { $pull: { scores: 89 } }
+)
+```
+### $addToSet: ### Adds a value to an array only if the value is not already in the array. This operator ensures no duplicate values.
+
+Example: Add a unique element to an array.
+```
+db.collection.updateOne(
+    { _id: 1 },
+    { $addToSet: { tags: "mongodb" } }
+)
+```
+### $pop: ### Removes the first or last element of an array.
+
+Example: Remove the last element from an array.
+```
+db.collection.updateOne(
+    { _id: 1 },
+    { $pop: { scores: 1 } }  // Use -1 to remove the first element
+)
+```
+### $pullAll: ### Removes all matching values from an array. It differs from $pull in that it removes all instances of the specified values from the array.
+
+Example: Remove all specified elements from an array.
+```
+db.collection.updateOne(
+    { _id: 1 },
+    { $pullAll: { scores: [89, 92] } }
+)
+```
+
+### $push with Modifiers: ###
+These modifiers are used in combination with $push to provide additional functionality.
+
+* $each: Allows you to push multiple values onto an array.
+* $slice: Limits the number of array elements.
+* $sort: Sorts array elements.
+* $position: Specifies the position in the array to add elements.
+
+
+## Common Update Array Modifiers in MongoDB ##
+
+### $each: ###
+
+Usage: Used with $push and $addToSet to add multiple elements to an array.
+Example: Add multiple projects to a project array field:
+```
+db.empdb9.updateOne(
+  { ename: "Rahul" },
+  { $push: { project: { $each: ["p2", "p3"] } } }
+)
+```
+
+### $slice: ###
+
+Usage: Used with $push to limit the size of an array. It allows you to keep only the last N elements in the array after an update.
+Example: Keep only the last 3 elements after pushing a new element:
+```
+db.empdb9.updateOne(
+  { ename: "Rahul" },
+  { $push: { project: { $each: ["p4"], $slice: -3 } } }
+)
+```
+Note: $slice: -3 means keeping the last 3 elements.
+
+### $sort: ###
+
+Usage: Used with $push to sort array elements in ascending or descending order when adding new elements.
+Example: Sort the project array in ascending order while adding new projects:
+```
+db.empdb9.updateOne(
+  { ename: "Rahul" },
+  { $push: { project: { $each: ["p1"], $sort: 1 } } }
+)
+```
+Note: $sort: 1 sorts in ascending order, and $sort: -1 sorts in descending order.
+
+## $position: ##
+
+Usage: Used with $push to specify the position in the array where new elements should be added.
+Example: Add a new project at the beginning of the project array:
+```
+db.empdb9.updateOne(
+  { ename: "Rahul" },
+  { $push: { project: { $each: ["p0"], $position: 0 } } }
+)
+```
+Note: $position: 0 places the element at the start of the array.
+
 ## cursor ##
 
 Cursor is a MongoDB object used to iterate over a set of results returned by a query or aggregation. Instead of returning all results at once, MongoDB uses cursors to optimize the retrieval of large datasets, handling data in manageable batches.
