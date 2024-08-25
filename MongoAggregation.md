@@ -262,7 +262,7 @@ cmd: blog> db.posts.aggregate([ { $group: { _id: "$author.nickname" } }] )
 out: [ { _id: 'emily23' }, { _id: 'bob1995' }, { _id: 'mikef' } ]
 ```
 
-##3 cursor ###
+## 3 cursor ##
 
 Cursor is a MongoDB object used to iterate over a set of results returned by a query or aggregation. Instead of returning all results at once, MongoDB uses cursors to optimize the retrieval of large datasets, handling data in manageable batches.
 
@@ -306,6 +306,7 @@ Example: { $match: { status: "A" } }
 
 Reshapes each document in the stream, such as by including or excluding specific fields, adding new fields, or computing values.
 
+{ $project: { <filed1>: <1>, <field2>: <0>, <newField1>: <expression> ... } }
 Example: { $project: { title: 1, author: 1, _id: 0 } }
 
 3. ### $group ###
@@ -313,12 +314,110 @@ Example: { $project: { title: 1, author: 1, _id: 0 } }
 Groups documents by a specified identifier expression and applies an accumulator function (e.g., sum, avg) to each group.
 ``` { $group: { _id: <expressio>, <field>: { <accumulator> : <expression> }, ... }} ```
 
+   ** Accumulator operators **
+   
+   `{ $<accumulatorOperator>: <expression> }`
+   
+   some of the commonly used accumulator operators:
+   i. ** $sum **: Calculates the sum of numeric values.
+   
+   Example: Calculate the total sales for each product.
+   ```
+   db.sales.aggregate([
+     { $group: { _id: "$product", totalSales: { $sum: "$amount" } } }
+   ])
+   ```
+   
+   ii. ** $avg **: Calculates the average of numeric values.
+   
+   Example: Find the average score of each student.
+   ```
+   db.students.aggregate([
+     { $group: { _id: "$student_id", avgScore: { $avg: "$score" } } }
+   ])
+   ```
+   
+   iii. ** $min **: Returns the minimum value in a group.
+   
+   Example: Find the youngest age in each department.
+   ```
+   db.employees.aggregate([
+     { $group: { _id: "$department", youngest: { $min: "$age" } } }
+   ])
+   ```
+   
+   iv. ** $max **: Returns the maximum value in a group.
+   
+   Example: Find the highest score in each subject.
+   ```
+   db.exams.aggregate([
+     { $group: { _id: "$subject", highestScore: { $max: "$score" } } }
+   ])
+   ```
+   
+   v. ** $push **: Adds values to an array.
+   
+   Example: Group all reviews by product.
+   ```
+   db.reviews.aggregate([
+     { $group: { _id: "$product_id", reviews: { $push: "$review" } } }
+   ])
+   ```
+   
+   vi. ** $addToSet **: Adds unique values to an array (no duplicates).
+   
+   Example: List all unique tags used in blog posts.
+   ```
+   db.posts.aggregate([
+     { $group: { _id: null, uniqueTags: { $addToSet: "$tags" } } }
+   ])
+   ```
+   
+   vii. ** $first **: Returns the first document from each group.
+   
+   Example: Get the first order date for each customer.
+   ```
+   db.orders.aggregate([
+     { $sort: { orderDate: 1 } },
+     { $group: { _id: "$customerId", firstOrderDate: { $first: "$orderDate" } } }
+   ])
+   ```
+   viii. ** $last **: Returns the last document from each group.
+   
+   Example: Get the most recent order for each customer.
+   ```
+   db.orders.aggregate([
+     { $sort: { orderDate: 1 } },
+     { $group: { _id: "$customerId", lastOrderDate: { $last: "$orderDate" } } }
+   ])
+   ```
+   ix. ** $stdDevSamp **: Returns the sample standard deviation of the input values.
+   
+   Example: Calculate the standard deviation of scores in each class.
+   ```
+   db.scores.aggregate([
+     { $group: { _id: "$class", stdDev: { $stdDevSamp: "$score" } } }
+   ])
+   ```
+   
+   x. ** $stdDevPop **: Returns the population standard deviation of the input values.
+   
+   Example: Calculate the population standard deviation of salaries in each department.
+   ```
+   db.employees.aggregate([
+     { $group: { _id: "$department", stdDev: { $stdDevPop: "$salary" } } }
+   ])
+   ```
+   
+   Accumulator operators are used in aggregation stages, specifically within the $group and $project stages, to perform calculations or data transformations. These operators process multiple documents to return a single value, such as sums, averages, or concatenated strings.
+
 Example: { $group: { _id: "$cust_id", totalAmount: { $sum: "$amount" } } }
 
 4. ### $sort ###
 
 Sorts all input documents and outputs them in sorted order.
 
+{ $sort: {<field1>: <-1 | 1>, <field2>: <-1 | 1> ...}}
 Example: { $sort: { age: -1 } } (sort by age in descending order)
 
 5. ### $limit ###
@@ -336,8 +435,10 @@ Example: { $skip: 10 }
 7. ### $unwind ###
 
 Deconstructs an array field from the input documents to output a document for each element in the array.
+{ $unwind: <arrayReferenceExpression> }
 
-Example: { $unwind: "$tags" }
+Example: { $unwind: "$tags" },
+town> db.peoples.aggregate([{$unwind: "$tags"}, {$group: {_id: {tags: "$tags"}}} ])
 
 8. ### $lookup ###
 
@@ -359,13 +460,18 @@ Example:
 
 Writes the result of the aggregation pipeline to a specified collection. Replaces the output collection completely if it exists.
 
-Example: { $out: "filteredResults" }
+Example: { $out: "filteredResults" },
+
+db.peoples.aggregate([ { $group: { _id: {age: "$age", eyeColor: "$eyeColor"}}}, {$out: "<ANewCollectionName>"} ])
 
 10. ### $count ###
 
 Counts the number of documents that are passed to it and outputs the count as a document.
 
+
 Example: { $count: "num_docs" }
+db.peoples.aggregate([{ $match: {age:{$lte: 25}, gender:'male'}}, {$group: {_id: {name:'$name', isActive:'$isActive', eyeColor:'$eyeColor'}}}, {$count: "allDocumentsCount"}])
+[ { allDocumentsCount: 151 } ]
 
 11. ### $facet ###
 
@@ -418,8 +524,7 @@ Example: { $replaceRoot: { newRoot: "$address" } }
 
 Categorizes incoming documents into groups, called buckets, based on a specified expression, and outputs a document per each bucket.
 Example:
-json
-Copy code
+```
 {
   $bucket: {
     groupBy: "$price",
@@ -427,7 +532,7 @@ Copy code
     default: "Other"
   }
 }
-
+```
 16. ### $bucketAuto ###
 
 Automatically categorizes documents into a specified number of buckets based on a specified expression.
@@ -534,5 +639,13 @@ $: Projects the first element in an array that matches the query condition.
 $elemMatch: Projects the first matching element from an array based on specified criteria.
 $meta: Projects metadata (e.g., text score) associated with each document.
 $slice: Limits the number of elements projected from an array.
+
+## Limit of mongoDB ##
+
+* All aggregation stages can use maximum of 100 MB of RAM
+* Server will return an error if the ram limit is exceeded
+* { allowDiskUse: true } - will enable MongoDB to write data of stages to the temporal files
+
+eg: db.peoples.aggregate([], {allowDiskUse: true})
 
 
