@@ -262,13 +262,13 @@ cmd: blog> db.posts.aggregate([ { $group: { _id: "$author.nickname" } }] )
 out: [ { _id: 'emily23' }, { _id: 'bob1995' }, { _id: 'mikef' } ]
 ```
 
-## 3 cursor ##
+## cursor ##
 
 Cursor is a MongoDB object used to iterate over a set of results returned by a query or aggregation. Instead of returning all results at once, MongoDB uses cursors to optimize the retrieval of large datasets, handling data in manageable batches.
 
 ## How aggregation framework works? ##
 
-### Syntax: ##3
+### Syntax: ###
 db.<collection>.aggregate([
   <stage1>,
   <stage2>,
