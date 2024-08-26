@@ -755,4 +755,235 @@ $slice: Limits the number of elements projected from an array.
 
 eg: db.peoples.aggregate([], {allowDiskUse: true})
 
+## Transcation ##
+
+A transaction in the context of databases is a sequence of one or more operations (such as queries, updates, or deletions) that are treated as a single unit of work. The key characteristic of a transaction is that it is atomic; that is, all the operations within the transaction must be fully completed, or none of them should be. This ensures that the database remains in a consistent state, even in the case of errors or failures.
+
+### Key Properties of Transactions: ACID ###
+
+ACID is an acronym that stands for Atomicity, Consistency, Isolation, and Durability. These properties are applied to database transactions to ensure reliable and consistent data management. Let's break down how each ACID property is applied in a typical database transaction and provide an example to illustrate.
+
+### Atomicity: ###
+
+Application: Ensures that all operations within a transaction are completed successfully, or none are. If any operation fails, the entire transaction is rolled back to its initial state, ensuring that partial updates do not occur.
+
+Example: Consider a bank transfer where money is deducted from one account and credited to another. Atomicity ensures that either both actions are completed or neither is, preventing a situation where money is deducted without being credited elsewhere.
+
+### Consistency: ###
+
+Application: Ensures that a transaction brings the database from one valid state to another, maintaining all predefined rules (such as data types, foreign keys, constraints, etc.). The database must remain consistent before and after the transaction.
+
+Example: In the same bank transfer scenario, consistency ensures that the sum of the balances before and after the transaction remains the same, adhering to rules like non-negative account balances.
+
+### Isolation: ###
+
+Application: Ensures that concurrent transactions do not interfere with each other. Each transaction is executed in isolation, so intermediate states are not visible to other transactions. The final state reflects all transactions as if they were executed sequentially.
+
+Example: If two transactions are running simultaneously to transfer funds from the same account, isolation prevents them from affecting each other until one is complete. Thus, no other transaction sees the intermediate results of a transaction.
+
+### Durability: ###
+
+Application: Ensures that once a transaction is committed, it remains permanently recorded in the database, even in the event of a system failure (like a crash or power loss). This is typically achieved through writing changes to persistent storage.
+
+Example: After the bank transfer is successfully completed, the new balances are stored in a durable way so that even if the system crashes immediately afterward, the changes are not lost.
+
+## Sharding in MongoDB ##
+
+Sharding is a method used in MongoDB to distribute data across multiple servers or clusters to achieve horizontal scaling. By dividing large datasets into smaller, more manageable pieces, called shards, MongoDB can handle large amounts of data and high-traffic applications more efficiently.
+
+### Key Concepts in Sharding ###
+
+* Shard Key: A field or set of fields that determines how data is partitioned across shards.
+* Chunks: MongoDB divides sharded data into chunks, which are ranges of the shard key values. Each chunk is assigned to a shard.
+* Balancing: MongoDB automatically moves chunks across shards to ensure an even distribution of data and load.
+* Query Routing: The mongos router handles queries and directs them to the appropriate shard(s) based on the shard key and query parameters.
+
+## Time to live (TTL) ##
+
+TTL (Time to Live) in MongoDB refers to a feature that allows you to automatically delete documents from a collection after a specified period. This feature is useful for applications that require data to be removed after a certain time, such as session data, logs, or temporary data.
+
+### Creating a TTL Index ###
+
+Let's say you have a collection named sessions where each document represents a user session, and you want sessions to expire 24 hours (86,400 seconds) after they are created.
+
+1. ** Insert a Document: **
+
+```
+db.sessions.insert({
+  userId: "12345",
+  createdAt: new Date()  // This field will be used for TTL
+});
+```
+
+2. ** Create a TTL Index: **
+
+```
+db.sessions.createIndex(
+  { "createdAt": 1 },
+  { expireAfterSeconds: 86400 }
+);
+```
+
+In this example:
+
+`{ "createdAt": 1 }` specifies the field (`createdAt`) to index and the sort order (1 for ascending).
+`{ expireAfterSeconds: 86400 }` sets the TTL to 24 hours.
+
+## MAXIMUM DOCUMENT SIZE IS 16MB ##
+
+## Storage Enginers ##
+
+Storage engines in MongoDB are components that manage how data is stored, retrieved, and updated on disk. They are responsible for the actual data management tasks such as reading and writing data to storage, caching data in memory, handling data compression, and ensuring durability and consistency of the data.
+
+### Key Storage Engines in MongoDB ###
+
+1. ** WiredTiger: **
+
+** Default Engine: ** WiredTiger is the default storage engine starting from MongoDB 3.2.
+
+2. ** MMAPv1: **
+
+Legacy Engine: MMAPv1 was the original storage engine used in early versions of MongoDB but is no longer supported in versions from MongoDB 4.2 onwards.
+
+3. ** In-Memory Storage Engine **
+
+4. ** Encrypted storage engine **
+
+## ObjectId ##
+
+
+** ObjectId ** in BSON (Binary JSON) is a unique identifier for documents in a MongoDB collection. It is a 12-byte hexadecimal value that MongoDB uses as the default value for the `_id` field in a document if no other value is provided. The `_id` field serves as the primary key for the document, ensuring that every document within a collection has a unique identifier.
+
+### Structure of ObjectId ###
+
+An `ObjectId` consists of 12 bytes, broken down into the following components:
+
+1. ** Timestamp (4 bytes): ** The first 4 bytes represent a Unix timestamp in seconds. This is the number of seconds since the Unix epoch (January 1, 1970). The timestamp provides the date and time when the ObjectId was created.
+
+2. ** Machine Identifier (3 bytes): ** The next 3 bytes are a unique identifier for the machine on which the ObjectId was generated. This usually represents a hash of the machine's hostname.
+
+3. ** Process Identifier (2 bytes): ** The following 2 bytes are derived from the process identifier (PID) of the MongoDB process that generated the ObjectId. This ensures uniqueness across different processes running on the same machine.
+
+4. ** Counter (3 bytes): ** The last 3 bytes are a counter that starts with a random value and is incremented each time a new ObjectId is created by the same process. This counter helps ensure uniqueness even when multiple ObjectIds are generated within the same second on the same machine and process.
+
+Example:
+
+```
+{
+  "_id": ObjectId("64ac1234f65a123456789012"),
+  "name": "John Doe",
+  "email": "johndoe@example.com"
+}
+```
+## Cursor methods ##
+
+In MongoDB, a cursor is an object that allows you to iterate over the results of a query. When you perform a find operation in MongoDB, it returns a cursor that you can use to access the documents in the result set. Cursors provide various methods to manipulate and control the data returned by a query. Here are some common cursor methods and their descriptions:
+
+1. ### forEach() ###
+Description: Iterates over each document in the cursor and applies a JavaScript function to each document.
+Usage:
+``
+db.collection.find().forEach(function(doc) {
+  print(doc.name);
+});
+```
+Example: This example prints the name field of each document in the collection.
+
+2. ### toArray() ###
+
+Description: Converts the documents returned by the cursor into an array. This is useful when you want to work with the entire result set at once.
+Usage:
+```
+const docs = db.collection.find().toArray();
+printjson(docs);
+```
+Example: This example retrieves all documents and prints them in JSON format.
+3. ### next() ###
+
+Description: Returns the next document in the cursor. Useful for manual iteration.
+Usage:
+```
+const cursor = db.collection.find();
+const doc = cursor.next();
+printjson(doc);
+```
+Example: This example fetches the next document from the cursor and prints it.
+
+4. ### hasNext() ###
+Description: Returns true if there is another document in the cursor, and false otherwise.
+Usage:
+```
+const cursor = db.collection.find();
+while (cursor.hasNext()) {
+  printjson(cursor.next());
+}
+```
+Example: This example iterates over all documents using a while loop.
+
+5. ### count() ###
+
+Description: Returns the total number of documents that match the query criteria, regardless of the limit or skip applied.
+Usage:
+```
+const count = db.collection.find().count();
+print(count);
+```
+Example: This example prints the total number of documents matching the query.
+
+6. ### limit() ###
+
+Description: Limits the number of documents returned by the cursor.
+Usage:
+```
+db.collection.find().limit(5);
+```
+Example: This example limits the query result to 5 documents.
+
+7. ### skip() ###
+
+Description: Skips a specified number of documents in the result set, which is useful for pagination.
+Usage:
+```
+db.collection.find().skip(10);
+```
+Example: This example skips the first 10 documents in the result set.
+
+8. ### sort() ###
+
+Description: Sorts the documents in the cursor by a specified field or fields.
+Usage:
+```
+db.collection.find().sort({ age: 1 });
+```
+Example: This example sorts the documents in ascending order by the age field.
+
+9. ### batchSize() ###
+
+Description: Controls the number of documents returned in each batch of query results.
+```
+db.collection.find().batchSize(100);
+
+Example: This example sets the batch size to 100 documents.
+
+10. ### close() ###
+
+Description: Closes the cursor, freeing up resources on the server. It's typically used in client applications where cursors are opened and left unclosed.
+Usage:
+```
+const cursor = db.collection.find();
+cursor.close();
+```
+
+Example: This example closes the cursor after use.
+
+11. ### maxTimeMS() ###
+
+Description: Specifies a time limit for processing operations on the cursor, in milliseconds. Useful for avoiding long-running queries.
+Usage:
+```
+db.collection.find().maxTimeMS(5000);
+```
+Example: This example limits the query processing time to 5000 milliseconds (5 seconds).
+
+
 
