@@ -413,7 +413,7 @@ Example: { $match: { status: "A" } }
 
 Reshapes each document in the stream, such as by including or excluding specific fields, adding new fields, or computing values.
 
-{ $project: { <filed1>: <1>, <field2>: <0>, <newField1>: <expression> ... } }
+`{ $project: { <filed1>: <1>, <field2>: <0>, <newField1>: <expression> ... } }`
 Example: { $project: { title: 1, author: 1, _id: 0 } }
 
 3. ### $group ###
@@ -882,7 +882,7 @@ In MongoDB, a cursor is an object that allows you to iterate over the results of
 1. ### forEach() ###
 Description: Iterates over each document in the cursor and applies a JavaScript function to each document.
 Usage:
-``
+```
 db.collection.find().forEach(function(doc) {
   print(doc.name);
 });
@@ -962,6 +962,7 @@ Example: This example sorts the documents in ascending order by the age field.
 Description: Controls the number of documents returned in each batch of query results.
 ```
 db.collection.find().batchSize(100);
+```
 
 Example: This example sets the batch size to 100 documents.
 
@@ -985,5 +986,97 @@ db.collection.find().maxTimeMS(5000);
 ```
 Example: This example limits the query processing time to 5000 milliseconds (5 seconds).
 
+
+## $unwind ##
+
+The $unwind stage in MongoDB's aggregation framework is used to deconstruct an array field from the input documents, creating a separate document for each element of the array. This operation is useful when you need to manipulate or analyze data that is stored in arrays within documents.
+
+### How $unwind Works ###
+When you use $unwind, it breaks down an array into multiple documents, each containing one element of the array along with the rest of the document fields. This is especially useful when you want to:
+
+Query on individual elements of an array.
+Perform operations like $group, $sort, or $match on the elements of an array.
+Basic Syntax
+The basic syntax for $unwind is:
+```
+{
+  $unwind: {
+    path: "<field path>",
+    preserveNullAndEmptyArrays: <boolean> // Optional
+    includeArrayIndex: "<string>"         // Optional
+  }
+}
+```
+path: The field path of the array you want to unwind. The field name must be prefixed with a $ sign (e.g., $tags).
+preserveNullAndEmptyArrays (optional): A boolean that, when set to true, keeps the documents if the array is null, missing, or empty. The default is false.
+includeArrayIndex (optional): A string name for a new field that will contain the array index of the unwound item in its original array.
+
+** Example Usage **
+Suppose you have a collection named peoples with documents that include a field called tags, which is an array of tags associated with each person:
+
+```
+JSON:
+{
+    "_id": 1,
+    "name": "Alice",
+    "tags": ["developer", "blogger", "traveler"]
+},
+{
+    "_id": 2,
+    "name": "Bob",
+    "tags": ["manager", "coach"]
+}
+```
+Example 1: Basic Unwind
+To unwind the tags array so that each tag is in a separate document:
+
+```
+db.peoples.aggregate([
+  {
+    $unwind: "$tags"
+  }
+])
+```
+Result:
+
+json
+```
+{ "_id": 1, "name": "Alice", "tags": "developer" }
+{ "_id": 1, "name": "Alice", "tags": "blogger" }
+{ "_id": 1, "name": "Alice", "tags": "traveler" }
+{ "_id": 2, "name": "Bob", "tags": "manager" }
+{ "_id": 2, "name": "Bob", "tags": "coach" }
+```
+Each tag now appears as a separate document.
+
+## $merge ##
+
+The $merge stage in MongoDB's aggregation framework is used to merge the output of an aggregation pipeline into an existing collection. This stage allows you to write the aggregation results directly back to a specified collection, either by inserting new documents, updating existing ones, or replacing documents entirely.
+
+
+The $merge stage in MongoDB's aggregation framework is used to merge the output of an aggregation pipeline into an existing collection. This stage allows you to write the aggregation results directly back to a specified collection, either by inserting new documents, updating existing ones, or replacing documents entirely.
+
+## Key Features of $merge ##
+
+Writing to Collections: $merge writes the results of the aggregation pipeline to a specified collection. This is useful for updating materialized views or transforming and saving data.
+Flexible Update Options: $merge offers various options for how documents are handled when they already exist in the target collection.
+Atomic Operations: The operations performed by $merge are atomic for each document.
+Syntax
+The basic syntax for $merge is as follows:
+
+```
+{
+  $merge: {
+    into: "<collectionName>",
+    on: <identifierField>,    // Optional
+    whenMatched: <operation>, // Optional
+    whenNotMatched: <operation> // Optional
+  }
+}
+```
+** into: ** The name of the target collection where the output will be merged.
+** on: ** The field or fields used to identify matching documents in the target collection. Defaults to _id if not specified.
+** whenMatched: ** Specifies what to do if a document from the aggregation matches an existing document in the target collection.
+** whenNotMatched: ** Specifies what to do if a document from the aggregation does not match any existing document in the target collection.
 
 
