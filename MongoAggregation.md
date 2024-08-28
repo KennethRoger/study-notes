@@ -962,7 +962,6 @@ Example: This example sorts the documents in ascending order by the age field.
 Description: Controls the number of documents returned in each batch of query results.
 ```
 db.collection.find().batchSize(100);
-```
 
 Example: This example sets the batch size to 100 documents.
 
@@ -1078,5 +1077,3 @@ The basic syntax for $merge is as follows:
 ** on: ** The field or fields used to identify matching documents in the target collection. Defaults to _id if not specified.
 ** whenMatched: ** Specifies what to do if a document from the aggregation matches an existing document in the target collection.
 ** whenNotMatched: ** Specifies what to do if a document from the aggregation does not match any existing document in the target collection.
-
-
