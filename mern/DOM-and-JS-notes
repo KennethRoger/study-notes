@@ -200,6 +200,63 @@ All of the above examples too.
 
 Strict equality - ===
 
+# `this` keyword #
+
+* this keyword is special. this keyword in global will refer to the global object (which can be anything where the JS is running eg:- window object for js inside the browser which is the norm). 
+
+* this keyword inside a function will refer undefined on "strict mode" but will be replaced by the global object if not in strict mode which is called 'this substitution'
+
+* this inside a function which is inside an object will refer to that object.
+```
+const obj = {
+    firstName: 'Kenneth',
+    lastName: 'Nelson',
+    printName: function () {
+        console.log(this.firstName + ' ' + this.lastName);
+    }
+}
+
+console.log(obj.printName()); // Kenneth Roger
+```
+
+# Call, Apply and Bind # 
+
+* these methods are a part of function, like it is actually like a function invokation. (eg:- functionName.call(object, ...arguments))
+* call method is applied with functions like you can use object values in another object on another different object
+eg:
+``` 
+        const obj1 = {
+            firstName: 'Kenneth',
+            lastName: 'Nelson',
+            printName: function () {
+                console.log(this.firstName + ' ' + this.lastName);
+            }
+        }
+        
+        const obj2 = {
+            firstName: 'Nelson',
+            lastName: 'Antony',
+        }
+    
+        obj1.printName.call(obj2) // Nelson Antony
+```
+
+* In apply you need to pass parameters inside an array here (eg: apply(objct, [...arguments])
+* bind return the functions unlike other two who execute them directly
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

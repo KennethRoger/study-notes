@@ -200,3 +200,59 @@ Query strings are not part of the route path because they serve a different purp
 <Refer>: [https://expressjs.com/en/guide/writing-middleware.html]()
 then:
 <Refer>: [https://expressjs.com/en/guide/using-middleware.html]()
+
+# API (Application Programming Interface)
+
+* They are a set of rules and protocols when building and interacting with what software application you need to implement on your project maybe (like getting google map's' api on your delivary project)
+* this allows different software systems to communicate with each other.
+
+## Types of API's ##
+    * **Rest**: Uses HTTP requests (HTTP methods) to interact with resources.
+    * **Soap**: Uses XML-based messages for communications.
+    * **GraphQL**: Allows clients to request specific data.
+
+# Cookies (with Sessions) #
+
+* cookies are a browser storage that has 4kb of data storage where the server can keep their datas who can have differnet functionalitites for visiting that server
+
+They are:
+    i. **session cookies** which temporarly stores data for a single session like user login status or form inputs. They are deleted when browser is closed
+
+    ii. **persistant cookies** which store data across sessions like user preferences for a website or their login credentials. They have an expiration date or remain until that date or until deleted manually deleted.
+
+    iii. **third-party cookies** which are set by the domains than the one you're visiting like third party ads often for tracking and advertising purposes
+
+    iv. **secure-cookies** which are transimitted only over https, ensuring they are encrypted during transmission. Used to enchance security by protecting sensitive data.
+
+    v. **httpOnlyCookies** which are not accessible via JS which reduces the risk of cross-site scripting (XSS) attacks. This is used to store session tokens securly
+
+## Purpose of the Secret Key ##
+
+The secret key is used to sign the session ID cookie that is sent to the client (user's browser). Here's what happens in detail:
+
+    1. **Session ID Generation and Signing:**
+
+        * When a user initiates a session (e.g., by logging in), the server generates a unique session ID.
+
+        * This session ID is then signed with the secret key using a hash function. This process creates a hash (a unique string) that represents the session ID but is secure and can't be easily tampered with.
+
+        * The signed session ID is then stored in a cookie (usually named connect.sid) and sent to the client.
+
+    2. **Client Stores the Cookie:**
+
+        * The client’s browser stores the session cookie and sends it back to the server with every subsequent request.
+
+    3. **Server Validates Session:**
+        * On each request, the server checks the session cookie sent by the client.
+        * It verifies the signature of the session ID using the same secret key. If the session ID has been altered in any way, the hash will not match, indicating that the session is invalid or has been tampered with.
+
+        * If the hash matches, the server considers the session valid and retrieves the corresponding session data from the session store (e.g., MongoDB, Redis, in-memory, etc.).
+
+## Local Storage and Session storage ##
+
+* Both storages can have 5-10 Mb of storage which depends on the browser.
+
+* In **local storage** data remains even after the browser is closed. This is used to store user preferences or settings that should persist across sessions.
+
+* In **session storage** the data is cleared when the tab or window is closed. This is used to store temporary data like the cart details you add when you browse through an ecommerce site (like the item added in cart shouldn't be removed when the user browses through the site), similarly for form inputs like the user shouldn't need to verify each time they acquire a new url or for the UI state.
+ 

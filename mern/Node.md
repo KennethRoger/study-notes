@@ -599,3 +599,15 @@ If there is no error, the object is null. If there is an error, it contains some
 The event loop is what allows Node.js to perform non-blocking I/O operations — despite the fact that a single JavaScript thread is used by default — by offloading operations to the system kernel whenever possible.
 
 Since most modern kernels are multi-threaded, they can handle multiple operations executing in the background. When one of these operations completes, the kernel tells Node.js so that the appropriate callback may be added to the **poll** queue to eventually be executed.
+
+#Cluster#
+
+cluster is a node js module used to create multiple instances of the node js process for parrallel execution. When a server needs to handle thousands of requests cluster is used
+
+#Child Porcess#
+
+Child process is also a node js module that of course creates multiple instance of the node js process but it is used to run other scripts or program from outside of the node js process.
+
+#Worker Threads#
+
+Worker threads does not make new instances but runs javascript in multiple threads in the same node js process

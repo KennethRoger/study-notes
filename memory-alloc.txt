@@ -1,0 +1,16 @@
+# POINTERS AND DYNAMIC MEMORY #
+
+Memory architecture
+
+HEAP -->
+  |
+Stack --> stores local variabls, function calls and control flow data
+  |
+Static/Global --> global variable not declred inside a function
+  |
+Code(Text) --> stores Instructions
+
+
+##How three segments (code, static, stack) of the memory are used when program execution##
+
+

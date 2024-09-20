@@ -1,5 +1,15 @@
 # MONGO DB #
 
+# SQL vs NoSQL #
+
+* SQL, or Structured Query Language, is a programming language with a traditional approach that allows relational databases that model predefined schemas to manage structured data like rows and tables.
+
+* NoSQL, which stands for "Not Only SQL," offers a more flexible, non-relational approach, ideal for handling unstructured or dynamic data.
+
+* SQL databases use structured query language (SQL) and have a predefined schema. NoSQL databases have dynamic schemas for unstructured data.
+
+![SQL vs NoSQL](./images/Sql-vs-noSql.png);
+
 ## JSON ##
 
 JSON (JavaScript Object Notation) is a lightweight data-interchange format that is easy for humans to read and write, and easy for machines to parse and generate. It is primarily used to transmit data between a server and a web application or within applications for structured data exchange.
@@ -1077,3 +1087,15 @@ The basic syntax for $merge is as follows:
 ** on: ** The field or fields used to identify matching documents in the target collection. Defaults to _id if not specified.
 ** whenMatched: ** Specifies what to do if a document from the aggregation matches an existing document in the target collection.
 ** whenNotMatched: ** Specifies what to do if a document from the aggregation does not match any existing document in the target collection.
+
+## Mongoose ##
+
+**Mongoose** is an Object Data Modelling (ODM) library for MongoDB and NodeJS.
+(**ODM** maps application data(which can be username & password from an html form) to MongoDB documents making it easier to work with MongoDB in an object-oriented way)
+It provies:
+    * **Schema Definitions**: Define data structure and validation rules.
+    * **Model Creation**: Create models for interacting with MongoDB collections.
+    * **Query Building**: Simplify querying MongoDB with a fluent API.
+    * **Middleware**: Define functions that execute before or after certain operations(eg: saving documents).
+
+
