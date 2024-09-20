@@ -73,7 +73,7 @@ React apps are made out of **components**. A component is a piece of the UI (use
 
 **React components are JavaScript functions that return markup**
 
-```
+```jsx
 function MyButton () {
     return (
         <button>I'm a button </button>
@@ -83,7 +83,7 @@ function MyButton () {
 
 The component `MyButton` can nest it into another component:
 
-```
+```jsx
 export default function MyApp() {
     return (
         <div>
@@ -102,7 +102,7 @@ The markup syntax you’ve seen above is called JSX. It is optional, but most Re
 
 JSX is stricter than HTML. You have to close tags like <br />. Your component also can’t return multiple JSX tags. You have to wrap them into a shared parent, like a <div>...</div> or an empty <>...</> wrapper:
 
-```
+```jsx
 function AboutPage() {
   return (
     <>
@@ -117,13 +117,13 @@ function AboutPage() {
 
 In React, you specify a CSS class with `className`. It works the same way as the HTML `class` attribute
 
-```
+```jsx
 <img className="avatar" />
 ```
 
 in css file
 
-```
+```css
 /* In your CSS */
 .avatar {
   border-radius: 50%;
@@ -134,7 +134,7 @@ in css file
 
 JSX lets you put markup into JavaScript. Curly braces let you “escape back” into JavaScript so that you can embed some variable from your code and display it to the user. For example, this will display `user.name`
 
-```
+```jsx
 return (
   <h1>
     {user.name}
@@ -144,14 +144,29 @@ return (
 
 A more complex expression insdie the jsx curly braces like string concatenation:
 
-```
+```jsx
 const user = {
     name: 'Hedy Lmarr',
     imageUrl: 'https://i.imgur.com/yXOvdOSs.jpg',
     imageSize: 90,
 };
 
-export
+export default function Profile() {
+    return (
+        <>
+            <h1>{user.name}</h1>
+            <img
+                className="avatar"
+                src={user.imageUrl}
+                alt={'Photo of' + user.name}
+                style={{
+                    width: user.imageSize,
+                    height: user.imageSize
+                }}
+            />
+        </>
+    );
+}
 ```
 
 # JSX
@@ -160,7 +175,7 @@ JSX (JavaScript XML) is a syntax extension for JavaScript that allows you to wri
 
 Like this:
 
-```
+```jsx
 const element = <h1>Hello, World!</h1>;
 ```
 
@@ -174,7 +189,7 @@ const element = React.createElement('h1', null, 'Hello, World!');
 
 You can write your components entirely in JavaScript without JSX:
 
-```
+```jsx
 function MyComponent() {
   return React.createElement(
     'div',
@@ -189,7 +204,7 @@ function MyComponent() {
 
 If you're returning multiple JSX elements, they must be wrapped inside a parent element (like a <div>, <section>, or <Fragment>).
 
-```
+```jsx
 return (
   <div>
     <h1>Hello, World!</h1>
@@ -210,7 +225,7 @@ Here's the steps:
 
 Your code:
 
-```
+```jsx
 const element = <h1>Hello, World!</h1>;
 ```
 
@@ -220,7 +235,7 @@ Before the browser can understand JSX, a tool like Babel is used to transpile it
 
 It converts the above JSX elements into somthing like this:
 
-```
+```jsx
 const element = React.createElement('h1', null, 'Hello, World!');
 ```
 
@@ -234,7 +249,7 @@ The browser runs this JavaScript code, and React uses this information to build 
 
 Every JSX element gets compiled to a **React.createElement()** call. For example:
 
-```
+```jsx
 <div>
   <h1>Hello</h1>
   <p>World</p>
@@ -243,7 +258,7 @@ Every JSX element gets compiled to a **React.createElement()** call. For example
 
 which get's transpiled into:
 
-```
+```jsx
 React.createElement('div', null,
   React.createElement('h1', null, 'Hello'),
   React.createElement('p', null, 'World')
@@ -260,7 +275,7 @@ Here createElement function typically takes three arguments:-
 
 The `createElement` function returns a plain JavaScript object that represents a React element. This object contains information about the element type, any props (attributes), and its children
 
-```
+```jsx
 {
   type: 'h1',
   props: {
@@ -279,7 +294,7 @@ The `createElement` function returns a plain JavaScript object that represents a
 
 ### More consice example with multiple child elements
 
-```
+```jsx
 React.createElement('div', null,
   React.createElement('h1', null, 'Hello'),
   React.createElement('p', null, 'World')
@@ -288,7 +303,7 @@ React.createElement('div', null,
 
 which creates the following React element object:
 
-```
+```jsx
 {
   type: 'div',
   props: {
