@@ -245,6 +245,90 @@ eg:
 * bind return the functions unlike other two who execute them directly
 
 
+# CLASS
+
+```js
+class Person {
+    
+    constructor(name) {
+        this.name = name;
+        console.log(`Constructor for ${this.name}`);
+    }
+    
+    static staticMethod() {
+        console.log("Static Method");
+    }
+    
+    greetPerson(){
+        console.log("Hello " + this.name)
+    }
+}
+
+const p = new Person('Kenneth');
+
+console.log(typeof Person)
+console.log(typeof p)
+
+console.log(p.greetPerson === Person.prototype.greet);
+
+Person.staticMethod();
+
+p.greetPerson();
+```
+
+## Inheritance of classes
+
+```js
+// Inheritance example
+
+class Person {
+    constructor(name) {
+        console.log(name + " Person constructor");
+    }
+}
+
+class Employee extends Person {
+    
+}
+
+let e = new Employee("Kenneth"); // logs "Kenneth Person constructor" because the constructor method of the parent class is invoked
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Two constructor example
+
+class Person {
+    constructor(name) {
+        console.log(`Person ${name} constructor`);
+    }
+    
+    getID() {
+        return 10;
+    }
+    
+    getEmail() {
+        return "example@xyz.com";
+    }
+}
+
+class Employee extends Person {
+    constructor(name) {
+        super(name); // this keyword is necessary bcz parent class constructor should be called before which ensure that the parent is already successfully set up
+        console.log(`Employee ${name} constructor`);
+    }
+    
+    getEmail() {
+        return "Hidden";
+        // return super.getEmail(); // This will print the super class method
+    }
+}
+
+let e = new Employee("Kenneth"); // logs "Person Kenneth constructor" and then "Employee Kenneth constructor"
+
+console.log(e.getID()); // logs 10 from the parent constructor
+
+console.log(e.getEmail()); // logs "Hidden" -  method overriding. But with 'super' keyword it returns the parent method
+```
 
 
 

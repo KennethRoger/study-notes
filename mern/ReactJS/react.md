@@ -2421,3 +2421,100 @@ export class PostList extends Component {
 
 export default PostList;
 ```
+
+# HOOKS
+
+Hooks are a new feature addition in React version 16.8. Hooks allow you to use React features without having to write a class. Hooks don't work inside classes.
+
+# Why Hooks
+
+- You had to understand how this keyword works in JS
+- Remember to bind event handlers in class components
+- Classes don't minify very well and make hot reloading very unreliable.
+
+# Rules of Hooks
+
+- **Only Call Hooks at the Top Level**
+
+Don't call Hooks inside loops, conditions, or nested functions
+
+- **Only Call Hooks from React Functions**
+
+Call them from within React functional components and not just any regular JS functions
+
+# FROM HERE ON IT MAY ONLY BE HEADING AND SMALL IMPORTANT NOTES
+
+# 'useState' Hook
+
+`const [state, setState] = useState(inititalStateValue);`
+
+## Summary - useState
+
+- The useState hook lets you add state to functional components
+- In classes, the state is always an object.
+- With the useState hook, the state doesn't have to be an object.
+- The useState hook retrns an array with 2 elements.
+- The first element is the current value of the state, and the second element is a state setter function
+- New state value depends on the previous state value, and the second element is a state setter function
+- When dealing with objects or arrays, always make sure to spread your state varialbe and then call the setter function
+
+# 'useEffect' Hook
+
+The `useEffect` Hook lets you perform side effects in functional components. It is a close replacement for `componentDidMount`, `componentDidUpdate` and `componentWillUnmount`.
+
+`useEffect(functionThatGetsExecutedAfterEveryRender, [dependencyArray-ValuesTheEffectDependsOn])`
+
+You can return a function that executes a code to unmount possible memory leaks (eg: event listeners )
+
+Note - if you think dependecy array is a way to specify when you want to rerun the effect you're going to run into problems. Instead dependency array should be thought of as a way to let react know about everything that the effect must watch for changes
+
+# 'useContext' Hook
+
+Context provides a way to pass data through the component tree without having to pass props down manually at every level.
+
+`const context = React.createContext()`
+
+# 'useReducer' Hook
+
+useReducer is a hook that is used for state management. It is an alternative to useState. useState is built using useReducer.
+
+useReducer is like reduce function for arrays in JS.
+
+`useReducer(reducerFunction, initialState)`
+
+Here the reducer function accepts two values currentState and action and returns a newState.
+The return value is a pair of values - newState and a dispatch method which is basically used to specify the action
+
+eg:
+
+```jsx
+import Reac, { useReducer } from "react";
+
+const inititalState = 0;
+const reducer = (state, action) => {
+  switch (action) {
+    case "increment":
+      return state + 1;
+    case "decrement":
+      return state - 1;
+    case "reset":
+      return inititalState;
+    default:
+      return state;
+  }
+};
+
+function CounterOne() {
+  const [count, dispatch] = useReducer(reducer, inititalState);
+  return (
+    <div>
+      <div>Count - {count}</div>
+      <button onClick={() => dispatch("increment")}>Increment</button>
+      <button onClick={() => dispatch("decrement")}>Decrement</button>
+      <button onClick={() => dispatch("reset")}>Reset</button>
+    </div>
+  );
+}
+
+export default CounterOne;
+```
