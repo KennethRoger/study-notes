@@ -2529,11 +2529,12 @@ React Router is a fully-featured client and server side routing library for Reac
 - const navigate = useNavigate(), navigate('path'), navigate(-1), navigate('path', {replace: true})
 - Outlet
 - No match route
+- Nested routes, outlet
 - Index route
 - Dynamic routes
 - useParams
 - useSearchParams (works like useState)
-- Relative links - Link that does not start with a forward slash and will inherit the closest route in whhich they are rendered
+- Relative links - Link that does not start with a forward slash and will inherit the closest route in which they are rendered
 - Lazy loading - A technique where components not required on the home page can be split into separate code bundles and download it only when the user navigates to that page. Think of it as incremently downloading the application. Reduces initital load time thereby improving performance
 
 Eg:
