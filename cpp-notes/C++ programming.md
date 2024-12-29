@@ -317,10 +317,315 @@ Value-initialization is when a variable initialization has an empty brace initia
 You should prefer value-initialization, as it initializes the variable to a consistent value.
 
 
+## `std::cout` is buffered
+
+Consider a rollercoaster ride at your favorite amusement park. Passengers show up (at some variable rate) and get in line. Periodically, a train arrives and boards passengers (up to the maximum capacity of the train). When the train is full, or when enough time has passed, the train departs with a batch of passengers, and the ride commences. Any passengers unable to board the current train wait for the next one.
+
+This analogy is similar to how output sent to std::cout is typically processed in C++. Statements in our program request that output be sent to the console. However, that output is typically not sent to the console immediately. Instead, the requested output “gets in line”, and is stored in a region of memory set aside to collect such requests (called a **buffer**). Periodically, the buffer is **flushed**, meaning all of the data collected in the buffer is transferred to its destination (in this case, the console).
+
+This also means that if your program crashes, aborts, or is paused (e.g. for debugging purposes) before the buffer is flushed, any output still waiting in the buffer will not be displayed.
+
+Using `std::endl` is often inefficient, as it actually does two jobs: it outputs a newline (moving the cursor to the next line of the console), and it flushes the buffer (which is slow). If we output multiple lines of text ending with std::endl, we will get multiple flushes, which is slow and probably unnecessary.
+
+When outputting text to the console, we typically don’t need to explicitly flush the buffer ourselves. C++’s output system is designed to self-flush periodically, and it’s both simpler and more efficient to let it flush itself.
+
+To output a newline without flushing the output buffer, we use `\n` (inside either single or double quotes), which is a special symbol that the compiler interprets as a newline character.
+
+**NOTE**: In C++, we use single quotes to represent single characters (such as 'a' or '$'), and double-quotes to represent text (zero or more characters). Even though ‘\n’ is represented in source code as two symbols, it is treated by the compiler as a single **linefeed (LF)** character (with ASCII value 10), and thus is conventionally single quoted (unless embedded into existing double-quoted text).
 
 
+## std::cin
 
+`std::cin` is another predefined variable in the iostream library. Whereas `std::cout` prints data to the console (using the insertion operator `<<` to provide the data), `std::cin` (which stands for “character input”) reads input from keyboard. We typically use the extraction operator `>>` to put the input data in a variable (which can then be used in subsequent statements).
 
+```cpp
+#include <iostream>  // for std::cout and std::cin
 
+int main()
+{
+    std::cout << "Enter a number: "; // ask user for a number
 
+    int x{};       // define variable x to hold user input (and value-initialize it)
+    std::cin >> x; // get number from keyboard and store it in variable x
 
+    std::cout << "You entered " << x << '\n';
+    return 0;
+}
+```
+
+### std::cin is buffered
+
+In a prior section, we noted that outputting data is actually a two stage process:
+
+* The data from each output request is added (to the end) of an output buffer.
+* Later, data from (the front of) the output buffer is flushed to the output device (the console).
+
+Similarly, inputting data is also a two stage process:
+
+* The individual characters you enter as input are added to the end of an input buffer (inside `std::cin`). The enter key (pressed to submit the data) is also stored as a `'\n'` character.
+* The extraction operator ‘>>’ removes characters from the front of the input buffer and converts them into a value that is assigned (via copy-assignment) to the associated variable. This variable can then be used in subsequent statements.
+
+Let's demonstrate this by an example:
+
+```cpp
+#include <iostream>  // for std::cout and std::cin
+
+int main()
+{
+    std::cout << "Enter two numbers: ";
+
+    int x{};
+    std::cin >> x;
+
+    int y{};
+    std::cin >> y;
+
+    std::cout << "You entered " << x << " and " << y << '\n';
+
+    return 0;
+}
+```
+
+This program inputs to two variables (this time as separate statements). We’ll run this program twice.
+
+Run #1: When std::cin >> x; is encountered, the program will wait for input. Enter the value 4. The input 4\n goes into the input buffer, and the value 4 is extracted to variable x.
+
+When std::cin >> y; is encountered, the program will again wait for input. Enter the value 5. The input 5\n goes into the input buffer, and the value 5 is extracted to variable y. Finally, the program will print You entered 4 and 5.
+
+There should be nothing surprising about this run.
+
+Run #2: When std::cin >> x is encountered, the program will wait for input. Enter 4 5. The input 4 5\n goes into the input buffer, but only the 4 is extracted to variable x (extraction stops at the space).
+
+When std::cin >> y is encountered, the program will not wait for input. Instead, the 5 that is still in the input buffer is extracted to variable y. The program then prints You entered 4 and 5.
+
+Note that in run 2, the program didn’t wait for the user to enter additional input when extracting to variable y because there was already prior input in the input buffer that could be used.
+
+### The basic extraction process
+
+Here’s a simplified view of how operator >> works for input:
+
+    First, leading whitespace (spaces, tabs, and newlines at the front of the buffer) is discarded from the input buffer. This will discard any unextracted newline character remaining from a prior line of input.
+    If the input buffer is now empty, operator >> will wait for the user to enter more data. Leading whitespace is again discarded.
+    operator >> then extracts as many consecutive characters as it can, until it encounters either a newline character (representing the end of the line of input) or a character that is not valid for the variable being extracted to.
+
+The result of the extraction is as follows:
+
+    If any characters were extracted in step 3 above, extraction is a success. The extracted characters are converted into a value that is then copy-assigned to the variable.
+    If no characters could be extracted in step 3 above, extraction has failed. The object being extracted to is copy-assigned the value 0 (as of C++11), and any future extractions will immediately fail (until std::cin is cleared).
+
+Any non-extracted characters (including newlines) remain available for the next extraction attempt.
+**Eg:**
+If the user types 5a and enter, 5a\n will be added to the buffer. 5 will be extracted, converted to an integer, and assigned to variable x. a\n will be left in the input buffer for the next extraction.
+
+If the user types ‘b’ and enter, b\n would be added to the buffer. Because b is not a valid integer, no characters can be extracted, so this is an extraction failure. Variable x would be set to 0, and future extractions will fail until the input stream is cleared.
+
+# Uninitialized variables
+
+Unlike some programming languages, C/C++ does not automatically initialize most variables to a given value (such as zero). When a variable that is not initialized is given a memory address to use to store data, the default value of that variable is whatever (garbage) value happens to already be in that memory address! A variable that has not been given a known value (through initialization or assignment) is called an uninitialized variable.
+
+* Initialized = The object is given a known value at the point of definition.
+* Assignment = The object is given a known value beyond the point of definition.
+* Uninitialized = The object has not been given a known value yet.
+
+# Undefined behavior
+
+Using the value from an uninitialized variable is our first example of undefined behavior. **Undefined behavior** (often abbreviated UB) is the result of executing code whose behavior is not well-defined by the C++ language. In this case, the C++ language doesn’t have any rules determining what happens if you use the value of a variable that has not been given a known value. Consequently, if you actually do this, undefined behavior will result.
+
+# Implementation-defined behavior and unspecified behavior
+
+A specific compiler and the associated standard library it comes with are called an **implementation** (as these are what actually implements the C++ language). In some cases, the C++ language standard allows the implementation to determine how some aspect of the language will behave, so that the compiler can choose a behavior that is efficient for a given platform. Behavior that is defined by the implementation is called implementation-defined behavior. Implementation-defined behavior must be documented and consistent for a given implementation.
+
+Example of implementation-defined behavior:
+
+```cpp
+#include <iostream>
+
+int main()
+{
+	std::cout << sizeof(int) << '\n'; // print how many bytes of memory an int value takes
+
+	return 0;
+}
+```
+On most platforms, this will produce `4`, but on others it may produce `2`.
+
+**Unspecified behavior** is almost identical to implementation-defined behavior in that the behavior is left up to the implementation to define, but the implementation is not required to document the behavior.
+
+We generally want to avoid implementation-defined and unspecified behavior, as it means our program may not work as expected if compiled on a different compiler (or even on the same compiler if we change project settings that affect how the implementation behaves!)
+
+# Keywords and naming identifiers
+
+## Keywords
+
+C++ reserves a set of 92 words (as of C++23) for its own use. These words are called keywords (or reserved words), and each of these keywords has a special meaning within the C++ language.
+
+Here is a list of all the C++ keywords (through C++23):
+
+* alignas
+* alignof
+* and
+* and_eq
+* asm
+* auto
+* bitand
+* bitor
+* bool
+* break
+* case
+* catch
+* char
+* char8_t (since C++20)
+* char16_t
+* char32_t
+* class
+* compl
+* concept (since C++20)
+* const
+* consteval (since C++20)
+* constexpr
+* constinit (since C++20)
+* const_cast
+* continue
+* co_await (since C++20)
+* co_return (since C++20)
+* co_yield (since C++20)
+* decltype
+* default
+* delete
+* do
+* double
+* dynamic_cast
+* else
+* enum
+* explicit
+* export
+* extern
+* false
+* float
+* for
+* friend
+* goto
+* if
+* inline
+* int
+* long
+* mutable
+* namespace
+* new
+* noexcept
+* not
+* not_eq
+* nullptr
+* operator
+* or
+* or_eq
+* private
+* protected
+* public
+* register
+* reinterpret_cast
+* requires (since C++20)
+* return
+* short
+* signed
+* sizeof
+* static
+* static_assert
+* static_cast
+* struct
+* switch
+* template
+* this
+* thread_local
+* throw
+* true
+* try
+* typedef
+* typeid
+* typename
+* union
+* unsigned
+* using
+* virtual
+* void
+* volatile
+* wchar_t
+* while
+* xor
+* xor_eq
+
+The name of a variable (or function, type, or other kind of item) is called an **identifier**.
+
+C++ also defines special identifiers: *override, final, import, and module*. These have a specific meaning when used in certain contexts but are not reserved otherwise.
+
+### Identifier naming best practices
+
+First, it is a convention in C++ that variable names should begin with a lowercase letter. If the variable name is a single word or acronym, the whole thing should be written in lowercase letters.
+
+Identifier names that start with a capital letter are typically used for user-defined types (such as structs, classes, and enumerations).
+
+If the variable or function name is multi-word, there are two common conventions: words separated by underscores (sometimes called snake_case), or intercapped (sometimes called camelCase, since the capital letters stick up like the humps on a camel).
+
+```cpp
+int my_variable_name;   // conventional (separated by underscores/snake_case)
+int my_function_name(); // conventional (separated by underscores/snake_case)
+
+int myVariableName;     // conventional (intercapped/camelCase)
+int myFunctionName();   // conventional (intercapped/camelCase)
+
+int my variable name;   // invalid (whitespace not allowed)
+int my function name(); // invalid (whitespace not allowed)
+
+int MyVariableName;     // unconventional (should start with lower case letter)
+int MyFunctionName();   // unconventional (should start with lower case letter)
+```
+
+# Literals
+
+Consider the following two statements:
+
+```cpp
+std::cout << "Hello world!";
+int x { 5 };
+```
+
+What are ‘”Hello world!”‘ and ‘5’? They are literals. A **literal** (also known as a **literal constant**) is a fixed value that has been inserted directly into the source code.
+
+Literals and variables both have a value (and a type). Unlike a variable (whose value can be set and changed through initialization and assignment respectively), the value of a literal is fixed and cannot be changed. The literal 5 always has value 5. This is why literals are called constants.
+
+A literal’s value is placed directly in the executable, and the executable itself can’t be changed after it is created. A variable’s value is placed in memory, and the value of memory can be changed while the executable is running.
+
+# Operators
+
+In mathematics, an **operation** is a process involving zero or more input values (called **operands**) that produces a new value (called an output value). The specific operation to be performed is denoted by a symbol called an **operator**.
+
+In C++, the output value of an operation is often called a **return value**.
+
+While most operators have symbols for names (e.g. `+`, or `==`), there are also a number of operators that are keywords (e.g. `new`, `delete`, and `throw`).
+
+The number of operands that an operator takes as input is called the operator’s **arity**
+
+## Types of Arity
+
+Operators in C++ come in four different arities:
+
+**Unary** operators act on one operand. An example of a unary operator is the `-` operator. For example, given `-5`, `operator-` takes literal operand `5` and flips its sign to produce new output value `-5`.
+
+**Binary** operators act on two operands (often called left and right, as the left operand appears on the left side of the operator, and the right operand appears on the right side of the operator).
+For example, given `3 + 4`, `operator+` takes the left operand `3` and the right operand `4` and applies mathematical addition to produce new output value `7`. The insertion (`<<`) and extraction (`>>`) operators are binary operators, taking `std::cout` or `std::cin` on the left side, and the value to output or variable to input to on the right side.
+
+**Ternary** operators act on three operands. There is only one of these in C++ (the conditional operator)
+
+**Nullary** operators act on zero operands. There is also only one of these in C++ (the throw operator)
+
+Operators can be chained together such that the output of one operator can be used as the input for another operator.
+
+## Return values and side effects
+
+Most operators in C++ just use their operands to calculate a return value. There are a few operators that do not produce return values (such as **delete** and **throw**)
+
+Some operators have additional behaviors. An operator (or function) that has some observable effect beyond producing a return value is said to have a **side effect**. For example, `x = 5` has the side effect of assigning value `5` to variable `x`. The changed value of `x` is observable (e.g. by printing the value of `x`) even after the operator has finished executing. `std::cout << 5` has the side effect of printing `5` to the console. We can observe the fact that `5` has been printed to the console even after `std::cout << 5` has finished executing.
+
+**NOTE:** For the operators we call primarily for their side effects (e.g. **operator=** or **operator<<**), it’s not always obvious what return values they produce (if any) unlike for **operator+** or **operator ***.
+
+So here, Both **operator=** and **operator<<** (when used to output values to the console) return their left operand. Thus, **x = 5** returns **x**, and **std::cout << 5** returns **std::cout**. This is done so that these operators can be chained.
