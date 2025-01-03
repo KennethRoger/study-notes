@@ -1,6 +1,5 @@
 # C/C++ PROGRAMMING
 
-
 # POINTERS IN C
 
 ## Introduction to pointers in C##
@@ -17,15 +16,15 @@
 
 ![C data types memory storage image](./images/C-data-types-size.png)
 
-
 Example in C:
+
 ```cpp
 #include <stdio.h>
 
 int main() {
-    char a = 'X'; 
+    char a = 'X';
     short b = 'Y'; // can use characters as it will covert to ASCII
-    int c = 'Z';    
+    int c = 'Z';
 
     printf("Size of char: %zu bytes\n", sizeof(a));   // Use %zu for size_t
     printf("Size of short: %zu bytes\n", sizeof(b));  // Use %zu for size_t
@@ -40,6 +39,7 @@ int main() {
 ```
 
 output:
+
 ```
 1 byte
 2 byte
@@ -83,10 +83,12 @@ Although objects in C++ can be unnamed (anonymous), more often we name our objec
 
 In order to use a variable in our program, we need to tell the compiler that we want one. The most common way to do this is by use of a special kind of declaration statement called a definition.
 A definition statement can be used to tell the compiler that we want to use a variable in our program.
+
 ```cpp
 int x; // define a variable named x (of type int)
 ```
-At **compile-time** (when the program is being compiled), when encountering this statement, the compiler makes a note to itself that we want a variable with the name `x`, and that the variable has the data type `int`.  From that point forward (with some limitations), whenever we use the identifier x in our code, the compiler will know that we are referring to this variable.
+
+At **compile-time** (when the program is being compiled), when encountering this statement, the compiler makes a note to itself that we want a variable with the name `x`, and that the variable has the data type `int`. From that point forward (with some limitations), whenever we use the identifier x in our code, the compiler will know that we are referring to this variable.
 
 ## Variable creation
 
@@ -111,18 +113,17 @@ In C++, we use objects to access memory. A named object is called a variable. Ea
 
 Variables are actually created at runtime, when memory is allocated for their use.
 
-* What is a value?
+- What is a value?
 
 A value is a letter (e.g. a), number (e.g. 5), text (e.g. Hello), or instance of some other useful concept that can be represented as data.
 
-* What is an object?
+- What is an object?
 
 An object is a region of storage (usually memory) that can store a value.
 
-* What is a variable?
+- What is a variable?
 
 A variable is an object that has a name.
-
 
 # Variable initialization
 
@@ -146,8 +147,8 @@ int main()
 In the above initialization of variable width, { 5 } is the initializer, and 5 is the initial value.
 ```
 
-
 ## Different forms of initialization
+
 Unlike assignment (which is generally straightforward), initialization in C++ is surprisingly complex. So we’ll present a simplified view here to get started.
 
 There are 5 common forms of initialization in C++:
@@ -166,11 +167,11 @@ int e {};      // value-initialization (empty braces)
 
 Other forms of initialization include:
 
-* Aggregate initialization
-* Copy-list-initialization
-* Reference initialization
-* Static-initialization, constant-initialization, and dynamic-initialization
-* Zero-initialization
+- Aggregate initialization
+- Copy-list-initialization
+- Reference initialization
+- Static-initialization, constant-initialization, and dynamic-initialization
+- Zero-initialization
 
 ### Default-initialization
 
@@ -228,7 +229,6 @@ Additionally, list initialization provides a way to initialize objects with a li
 ### List initialization disallows narrowing conversions
 
 The primary benefit of list-initialization is that “narrowing conversions” are disallowed. This means that if you try to list-initialize a variable using a value that the variable can not safely hold, the compiler is required to produce a diagnostic (compilation error or warning) to notify you. For example:
-
 
 ```cpp
 int main()
@@ -305,17 +305,16 @@ int main()
     return 0;
 }
 ```
+
 Additionally, the compiler will likely optimize these variables out of the program, so they have no performance impact.
 
 The `[[maybe_unused]]` attribute should only be applied selectively to variables that have a specific and legitimate reason for being unused (e.g. because you need a list of named values, but which specific values are actually used in a given program may vary). Otherwise, unused variables should be removed from the program.
 
 ### Q. What are default-initialization and value-initialization? What is the behavior of each? Which should you prefer?
 
-
 Default-initialization is when a variable initialization has no initializer (e.g. int x;). In most cases, the variable is left with an indeterminate value.
 Value-initialization is when a variable initialization has an empty brace initializer (e.g. int x{};). In most cases this will perform zero-initialization.
 You should prefer value-initialization, as it initializes the variable to a consistent value.
-
 
 ## `std::cout` is buffered
 
@@ -332,7 +331,6 @@ When outputting text to the console, we typically don’t need to explicitly flu
 To output a newline without flushing the output buffer, we use `\n` (inside either single or double quotes), which is a special symbol that the compiler interprets as a newline character.
 
 **NOTE**: In C++, we use single quotes to represent single characters (such as 'a' or '$'), and double-quotes to represent text (zero or more characters). Even though ‘\n’ is represented in source code as two symbols, it is treated by the compiler as a single **linefeed (LF)** character (with ASCII value 10), and thus is conventionally single quoted (unless embedded into existing double-quoted text).
-
 
 ## std::cin
 
@@ -357,13 +355,13 @@ int main()
 
 In a prior section, we noted that outputting data is actually a two stage process:
 
-* The data from each output request is added (to the end) of an output buffer.
-* Later, data from (the front of) the output buffer is flushed to the output device (the console).
+- The data from each output request is added (to the end) of an output buffer.
+- Later, data from (the front of) the output buffer is flushed to the output device (the console).
 
 Similarly, inputting data is also a two stage process:
 
-* The individual characters you enter as input are added to the end of an input buffer (inside `std::cin`). The enter key (pressed to submit the data) is also stored as a `'\n'` character.
-* The extraction operator ‘>>’ removes characters from the front of the input buffer and converts them into a value that is assigned (via copy-assignment) to the associated variable. This variable can then be used in subsequent statements.
+- The individual characters you enter as input are added to the end of an input buffer (inside `std::cin`). The enter key (pressed to submit the data) is also stored as a `'\n'` character.
+- The extraction operator ‘>>’ removes characters from the front of the input buffer and converts them into a value that is assigned (via copy-assignment) to the associated variable. This variable can then be used in subsequent statements.
 
 Let's demonstrate this by an example:
 
@@ -423,9 +421,9 @@ If the user types ‘b’ and enter, b\n would be added to the buffer. Because b
 
 Unlike some programming languages, C/C++ does not automatically initialize most variables to a given value (such as zero). When a variable that is not initialized is given a memory address to use to store data, the default value of that variable is whatever (garbage) value happens to already be in that memory address! A variable that has not been given a known value (through initialization or assignment) is called an uninitialized variable.
 
-* Initialized = The object is given a known value at the point of definition.
-* Assignment = The object is given a known value beyond the point of definition.
-* Uninitialized = The object has not been given a known value yet.
+- Initialized = The object is given a known value at the point of definition.
+- Assignment = The object is given a known value beyond the point of definition.
+- Uninitialized = The object has not been given a known value yet.
 
 # Undefined behavior
 
@@ -447,6 +445,7 @@ int main()
 	return 0;
 }
 ```
+
 On most platforms, this will produce `4`, but on others it may produce `2`.
 
 **Unspecified behavior** is almost identical to implementation-defined behavior in that the behavior is left up to the implementation to define, but the implementation is not required to document the behavior.
@@ -461,102 +460,102 @@ C++ reserves a set of 92 words (as of C++23) for its own use. These words are ca
 
 Here is a list of all the C++ keywords (through C++23):
 
-* alignas
-* alignof
-* and
-* and_eq
-* asm
-* auto
-* bitand
-* bitor
-* bool
-* break
-* case
-* catch
-* char
-* char8_t (since C++20)
-* char16_t
-* char32_t
-* class
-* compl
-* concept (since C++20)
-* const
-* consteval (since C++20)
-* constexpr
-* constinit (since C++20)
-* const_cast
-* continue
-* co_await (since C++20)
-* co_return (since C++20)
-* co_yield (since C++20)
-* decltype
-* default
-* delete
-* do
-* double
-* dynamic_cast
-* else
-* enum
-* explicit
-* export
-* extern
-* false
-* float
-* for
-* friend
-* goto
-* if
-* inline
-* int
-* long
-* mutable
-* namespace
-* new
-* noexcept
-* not
-* not_eq
-* nullptr
-* operator
-* or
-* or_eq
-* private
-* protected
-* public
-* register
-* reinterpret_cast
-* requires (since C++20)
-* return
-* short
-* signed
-* sizeof
-* static
-* static_assert
-* static_cast
-* struct
-* switch
-* template
-* this
-* thread_local
-* throw
-* true
-* try
-* typedef
-* typeid
-* typename
-* union
-* unsigned
-* using
-* virtual
-* void
-* volatile
-* wchar_t
-* while
-* xor
-* xor_eq
+- alignas
+- alignof
+- and
+- and_eq
+- asm
+- auto
+- bitand
+- bitor
+- bool
+- break
+- case
+- catch
+- char
+- char8_t (since C++20)
+- char16_t
+- char32_t
+- class
+- compl
+- concept (since C++20)
+- const
+- consteval (since C++20)
+- constexpr
+- constinit (since C++20)
+- const_cast
+- continue
+- co_await (since C++20)
+- co_return (since C++20)
+- co_yield (since C++20)
+- decltype
+- default
+- delete
+- do
+- double
+- dynamic_cast
+- else
+- enum
+- explicit
+- export
+- extern
+- false
+- float
+- for
+- friend
+- goto
+- if
+- inline
+- int
+- long
+- mutable
+- namespace
+- new
+- noexcept
+- not
+- not_eq
+- nullptr
+- operator
+- or
+- or_eq
+- private
+- protected
+- public
+- register
+- reinterpret_cast
+- requires (since C++20)
+- return
+- short
+- signed
+- sizeof
+- static
+- static_assert
+- static_cast
+- struct
+- switch
+- template
+- this
+- thread_local
+- throw
+- true
+- try
+- typedef
+- typeid
+- typename
+- union
+- unsigned
+- using
+- virtual
+- void
+- volatile
+- wchar_t
+- while
+- xor
+- xor_eq
 
 The name of a variable (or function, type, or other kind of item) is called an **identifier**.
 
-C++ also defines special identifiers: *override, final, import, and module*. These have a specific meaning when used in certain contexts but are not reserved otherwise.
+C++ also defines special identifiers: _override, final, import, and module_. These have a specific meaning when used in certain contexts but are not reserved otherwise.
 
 ### Identifier naming best practices
 
@@ -626,6 +625,393 @@ Most operators in C++ just use their operands to calculate a return value. There
 
 Some operators have additional behaviors. An operator (or function) that has some observable effect beyond producing a return value is said to have a **side effect**. For example, `x = 5` has the side effect of assigning value `5` to variable `x`. The changed value of `x` is observable (e.g. by printing the value of `x`) even after the operator has finished executing. `std::cout << 5` has the side effect of printing `5` to the console. We can observe the fact that `5` has been printed to the console even after `std::cout << 5` has finished executing.
 
-**NOTE:** For the operators we call primarily for their side effects (e.g. **operator=** or **operator<<**), it’s not always obvious what return values they produce (if any) unlike for **operator+** or **operator ***.
+**NOTE:** For the operators we call primarily for their side effects (e.g. **operator=** or **operator<<**), it’s not always obvious what return values they produce (if any) unlike for **operator+** or **operator \***.
 
 So here, Both **operator=** and **operator<<** (when used to output values to the console) return their left operand. Thus, **x = 5** returns **x**, and **std::cout << 5** returns **std::cout**. This is done so that these operators can be chained.
+
+# Introduction to expressions
+
+## Expressions
+
+In general programming, an **expression** is a non-empty sequence of literals, variables, operators, and function calls that calculates a value. The process of executing an expression is called **evaluation**, and the resulting value produced is called the **result** of the expression (also sometimes called the **return value**).
+
+Expressions do not end in a semicolon, and cannot be compiled by themselves. For example, if you were to try compiling the expression `x = 5`, your compiler would complain (probably about a missing semicolon). Rather, expressions are always evaluated as part of statements.
+
+For example, take this statement:
+
+```cpp
+int x{ 2 + 3 }; // 2 + 3 is an expression that has no semicolon -- the semicolon is at the end of the statement containing the expression
+```
+
+If you were to break this statement down into its syntax, it would look like this:
+
+`type identifier { expression };`
+
+Expressions cannot be executed by themselves -- they must exist as part of a statement. Fortunately, it’s trivial to convert any expression into an equivalent statement. An **expression statement** is a statement that consists of an expression followed by a semicolon. When the expression statement is executed, the expression will be evaluated.
+
+## Subexpressions, full expressions, and compound expressions
+
+Consider the following expressions:
+
+```cpp
+2               // 2 is a literal that evaluates to value 2
+2 + 3           // 2 + 3 uses operator + to evaluate to value 5
+x = 4 + 5       // 4 + 5 evaluates to value 9, which is then assigned to variable x
+```
+
+A **subexpression** is an expression used as an operand. For example, the subexpressions of `x = 4 + 5` are `x` and `4 + 5`. The subexpressions of `4 + 5` are `4` and `5`.
+
+A **full expression** is an expression that is not a subexpression. All three expressions above (`2`, `2 + 3`, and `x = 4 + 5`) are full expressions.
+
+In casual language, a **compound expression** is an expression that contains two or more uses of operators. `x = 4 + 5` is a compound expression because it contains two uses of operators (`operator=` and `operator+`). `2` and `2 + 3` are not compound expressions.
+
+# Functions
+
+A function is a collection of statements that execute sequentially.
+
+But more importatnly a function is a reusable sequence of statements designed to do a particular job.
+
+Functions provide a way for us to split our programs into small, modular chunks that are easier to organize, test, and use.
+
+The C++ standard library comes with plenty of already-written functions for you to use -- however, it’s just as common to write your own. Functions that you write yourself are called **user-defined functions**.
+
+## How function call works
+
+A program will be executing statements sequentially inside one function when it encounters a function call. A function call tells the CPU to interrupt the current function and execute another function. The CPU essentially “puts a bookmark” at the current point of execution, executes the function named in the function call, and then returns to the point it bookmarked and resumes execution.
+
+The function initiating the function call is the **caller**, and the function being **called** (executed) is the **callee**. A function call is also sometimes called an **invocation**, with the caller **invoking** the callee.
+
+### Function syntax
+
+```cpp
+returnType functionName() // This is the function header (tells the compiler about the existence of the function)
+{
+    // This is the function body (tells the compiler what the function does)
+}
+```
+
+An example of user defined function
+
+```cpp
+#include <iostream> // for std::cout
+
+// Definition of user-defined function doPrint()
+// doPrint() is the called function in this example
+void doPrint()
+{
+    std::cout << "In doPrint()\n";
+}
+
+// Definition of user-defined function main()
+int main()
+{
+    std::cout << "Starting main()\n";
+    doPrint();                        // Interrupt main() by making a function call to doPrint().  main() is the caller.
+    std::cout << "Ending main()\n";   // This statement is executed after doPrint() ends
+
+    return 0;
+}
+```
+
+**NOTE: Nested functions are not supported. A function whose definition is placed inside another function is a nested function. Unlike some other programming languages, in C++, functions cannot be nested.**
+
+## Return values
+
+To return a value back to the caller, two things are needed.
+
+First, your function has to indicate what type of value will be returned. This is done by setting the function’s **return type**, which is the type that is defined before the function’s name.
+
+Second, inside the function that will return a value, we use a **return statement** to indicate the specific value being returned to the caller. The specific value returned from a function is called the **return value**. When the return statement is executed, the function exits immediately, and the return value is copied from the function back to the caller. This process is called **return by value**.
+
+Eg:
+
+```cpp
+#include <iostream>
+
+int getValueFromUser() // this function now returns an integer value
+{
+ 	std::cout << "Enter an integer: ";
+	int input{};
+	std::cin >> input;
+
+	return input; // return the value the user entered back to the caller
+}
+
+int main()
+{
+	int num { getValueFromUser() }; // initialize num with the return value of getValueFromUser()
+
+	std::cout << num << " doubled is: " << num * 2 << '\n';
+
+	return 0;
+}
+```
+
+## So How main works
+
+When the program is executed, the operating system makes a function call to `main()`. Execution then jumps to the top of `main()`. The statements in `main()` are executed sequentially. Finally, `main()` returns an integer value (usually 0), and your program terminates.
+
+In C++, there are two special requirements for `main()`:
+
+- `main()` is required to return an `int`.
+- Explicit function calls to `main()` are disallowed.
+
+**NOTE: It is a common misconception that main is always the first function that executes. Global variables are initialized prior to the execution of main. If the initializer for such a variable invokes a function, then that function will execute prior to main.**
+
+## Status codes
+
+The return value from `main()` is sometimes called a **status code** (or less commonly, an **exit code**, or rarely a **return code**). The status code is used to signal whether your program was successful or not.
+
+By convention, a status code of `0` means the program ran normally (meaning the program executed and behaved as expected).
+
+The C++ standard only defines the meaning of 3 status codes: `0`, `EXIT_SUCCESS`, and `EXIT_FAILURE`. `0` and `EXIT_SUCCESS` both mean the program executed successfully. `EXIT_FAILURE` means the program did not execute successfully.
+
+`EXIT_SUCCESS` and `EXIT_FAILURE` are preprocessor macros defined in the <cstdlib> header:
+
+```cpp
+#include <cstdlib> // for EXIT_SUCCESS and EXIT_FAILURE
+
+int main()
+{
+    return EXIT_SUCCESS;
+}
+```
+
+If you want to maximize portability, you should only use `0` or `EXIT_SUCCESS` to indicate a successful termination, or `EXIT_FAILURE` to indicate an unsuccessful termination.
+
+## A value-returning function that does not return a value will produce undefined behavior
+
+A function that returns a value is called a **value-returning function**. A function is value-returning if the return type is anything other than `void`.
+
+A value-returning function must return a value of that type (using a return statement), otherwise undefined behavior will result.
+
+- Function main will implicitly return 0 if no return statement is provided.
+- A value-returning function can only return a single value back to the caller each time it is called. Although there are various ways to work around the limitation of functions only being able to return a single value.
+
+A great function example
+
+```cpp
+#include <iostream>
+
+int getValueFromUser()
+{
+    std::cout << "Enter an integer: ";
+    int input{};
+    std::cin >> input;
+    return input;
+}
+
+int main()
+{
+    int x{ getValueFromUser() };
+    int y{ getValueFromUser() };
+
+    std::cout << x << " + " << x + y << '\n';
+
+    return 0;
+}
+```
+
+**NOTE: Bro your code shouldn't be WET man, it should be DRY.**
+
+## Void functions
+
+- Void functions don’t need a return statement. A void function will automatically return to the caller at the end of the function. No return statement is required.
+
+- Void functions can’t be used in expression that require a value
+
+```cpp
+#include <iostream>
+
+// void means the function does not return a value to the caller
+void printHi()
+{
+    std::cout << "Hi" << '\n';
+}
+
+int main()
+{
+    printHi(); // okay: function printHi() is called, no value is returned
+
+    std::cout << printHi(); // compile error
+
+    return 0;
+}
+```
+
+The first call to `printHi()` is called in a context that does not require a value. Since the function doesn’t return a value, this is fine.
+
+The second function call to function `printHi()` won’t even compile. Function `printHi` has a `void` return type, meaning it doesn’t return a value. However, this statement is trying to send the return value of printHi to `std::cout` to be printed. `std::cout` doesn’t know how to handle this (what value would it output?). Consequently, the compiler will flag this as an error.
+
+## Function parameters and arguments
+
+A **function parameter** is a variable used in the header of a function. Function parameters work almost identically to variables defined inside the function, but with one difference: they are initialized with a value provided by the caller of the function.
+
+Function parameters are defined in the function header by placing them in between the parenthesis after the function name, with multiple parameters being separated by commas.
+
+Here are some examples of functions with different numbers of parameters:
+
+```cpp
+// This function takes no parameters
+// It does not rely on the caller for anything
+void doPrint()
+{
+    std::cout << "In doPrint()\n";
+}
+
+// This function takes one integer parameter named x
+// The caller will supply the value of x
+void printValue(int x)
+{
+    std::cout << x  << '\n';
+}
+
+// This function has two integer parameters, one named x, and one named y
+// The caller will supply the value of both x and y
+int add(int x, int y)
+{
+    return x + y;
+}
+```
+
+An **argument** is a value that is passed from the caller to the function when a function call is made:
+
+```cpp
+doPrint(); // this call has no arguments
+printValue(6); // 6 is the argument passed to function printValue()
+add(2, 3); // 2 and 3 are the arguments passed to function add()
+```
+
+Note that multiple arguments are also separated by commas.
+
+### How parameters and arguments work together
+
+When a function is called, all of the parameters of the function are created as variables, and the value of each of the arguments is copied into the matching parameter (using copy initialization). This process is called pass by value. Function parameters that utilize **pass by value** are called **value parameters**.
+
+For example:
+
+```cpp
+#include <iostream>
+
+// This function has two integer parameters, one named x, and one named y
+// The values of x and y are passed in by the caller
+void printValues(int x, int y)
+{
+    std::cout << x << '\n';
+    std::cout << y << '\n';
+}
+
+int main()
+{
+    printValues(6, 7); // This function call has two arguments, 6 and 7
+
+    return 0;
+}
+```
+
+Another example:
+
+```cpp
+#include <iostream>
+
+int getValueFromUser()
+{
+  int input{};
+  std::cout << "Enter an integer: ";
+  std::cin >> input;
+  return input;
+}
+
+void printDouble(int val)
+{
+  std::cout << "Double of " << val << " is: " << val * 2 << '\n';
+}
+
+int main()
+{
+  int num{ getValueFromUser() };
+  printDouble(num);
+
+  std::cout << num; // The num was never changed even though
+                    // passed it as a val to printDouble,
+                    // demonstration of pass by value.
+
+  return 0;
+}
+```
+
+By using both parameters and a return value, we can create functions that take data as input, do some calculation with it, and return the value to the caller.
+
+```cpp
+#include <iostream>
+
+int add(int x, int y)
+{
+    return x + y;
+}
+
+int multiply(int z, int w)
+{
+    return z * w;
+}
+
+int main()
+{
+    std::cout << add(4, 5) << '\n'; // within add() x=4, y=5, so x+y=9
+    std::cout << add(1 + 2, 3 * 4) << '\n'; // within add() x=3, y=12, so x+y=15
+
+    int a{ 5 };
+    std::cout << add(a, a) << '\n'; // evaluates (5 + 5)
+
+    std::cout << add(1, multiply(2, 3)) << '\n'; // evaluates 1 + (2 * 3)
+    std::cout << add(1, add(2, 3)) << '\n'; // evaluates 1 + (2 + 3)
+
+    return 0;
+}
+```
+
+### Unreferenced parameters
+
+In certain cases, you will encounter functions that have parameters that are not used in the body of the function. These are called **unreferenced parameters**.
+
+```cpp
+void doSomething(int count) // warning: unreferenced parameter count
+{
+    // This function used to do something with count but it is not used any longer
+}
+
+int main()
+{
+    doSomething(4);
+
+    return 0;
+}
+```
+
+Just like with unused local variables, your compiler will probably warn that variable `count` has been defined but not used.
+
+In a function definition, the name of a function parameter is optional. Therefore, in cases where a function parameter needs to exist but is not used in the body of the function, you can simply omit the name. A parameter without a name is called an **unnamed parameter**:
+
+```cpp
+void doSomething(int) // ok: unnamed parameter will not generate warning
+{
+}
+```
+
+The Google C++ style guide recommends using a comment to document what the unnamed parameter was:
+
+```cpp
+void doSomething(int /*count*/)
+{
+}
+```
+
+why we’d write a function that has a parameter whose value isn’t used?
+
+1. Let’s say we have a function with a single parameter. Later, the function is updated in some way, and the value of the parameter is no longer needed. If the now-unused function parameter were simply removed, then every existing call to the function would break (because the function call would be supplying more arguments than the function could accept). This would require us to find every call to the function and remove the unneeded argument. This might be a lot of work (and require a lot of retesting). It also might not even be possible (in cases where we did not control all of the code calling the function). So instead, we might leave the parameter as it is, and just have it do nothing.
+
+2. Operators `++` and `--` have prefix and postfix variants (e.g. `++foo` vs `foo++`). An unreferenced function parameter is used to differentiate whether an overload of such an operator is for the prefix or postfix case. 
+
+3. When we need to determine something from the type (rather than the value) of a type template parameter.
+
+#  Introduction to local scope
