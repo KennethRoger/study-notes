@@ -1010,8 +1010,883 @@ why we’d write a function that has a parameter whose value isn’t used?
 
 1. Let’s say we have a function with a single parameter. Later, the function is updated in some way, and the value of the parameter is no longer needed. If the now-unused function parameter were simply removed, then every existing call to the function would break (because the function call would be supplying more arguments than the function could accept). This would require us to find every call to the function and remove the unneeded argument. This might be a lot of work (and require a lot of retesting). It also might not even be possible (in cases where we did not control all of the code calling the function). So instead, we might leave the parameter as it is, and just have it do nothing.
 
-2. Operators `++` and `--` have prefix and postfix variants (e.g. `++foo` vs `foo++`). An unreferenced function parameter is used to differentiate whether an overload of such an operator is for the prefix or postfix case. 
+2. Operators `++` and `--` have prefix and postfix variants (e.g. `++foo` vs `foo++`). An unreferenced function parameter is used to differentiate whether an overload of such an operator is for the prefix or postfix case.
 
 3. When we need to determine something from the type (rather than the value) of a type template parameter.
 
-#  Introduction to local scope
+# Introduction to local scope
+
+Variables defined inside the body of a function are called **local variables**.
+
+```cpp
+int add(int x, int y)
+{
+    int z{ x + y }; // z is a local variable
+
+    return z;
+}
+```
+
+Function parameters are also generally considered to be local variables, and we will include them as such:
+
+```cpp
+int add(int x, int y) // function parameters x and y are local variables
+{
+    int z{ x + y };
+
+    return z;
+}
+```
+
+## Lifetime
+
+When is an instantiated variable destroyed?
+
+Local variables are destroyed in the opposite order of creation at the end of the set of curly braces in which it is defined (or for a function parameter, at the end of the function).
+
+An object’s **lifetime** is defined to be the time between its creation and destruction. Variable creation and destruction happen when the program is running (called runtime), not at compile time. Therefore, lifetime is a runtime property.
+
+### What happens when an object is destroyed?
+
+In most cases, nothing. The destroyed object simply becomes invalid. If the object is a class type object, prior to destruction, a special function called a destructor is invoked. In many cases, the destructor does nothing, in which case no cost is incurred.
+
+Any use of an object after it has been destroyed will result in undefined behavior.
+
+At some point after destruction, the memory used by the object will be **deallocated** (freed up for reuse).
+
+## Local Scope (block scope)
+
+An identifier’s **scope** determines where the identifier can be seen and used within the source code. When an identifier can be seen and used, we say it is **in scope**. When an identifier can not be seen, we can not use it, and we say it is **out of scope**. Scope is a compile-time property, and trying to use an identifier when it is not in scope will result in a compile error.
+
+The identifier of a local variable has **local scope**. An identifier with local scope (technically called **block scope**) is usable from the point of definition to the end of the innermost pair of curly braces containing the identifier (or for function parameters, at the end of the function). This ensures local variables cannot be used before the point of definition (even if the compiler opts to create them before then) or after they are destroyed. Local variables defined in one function are also not in scope in other functions that are called.
+
+Here’s a program demonstrating the scope of a variable named x:
+
+```cpp
+#include <iostream>
+
+// x is not in scope anywhere in this function
+void doSomething()
+{
+    std::cout << "Hello!\n";
+}
+
+int main()
+{
+    // x can not be used here because it's not in scope yet
+
+    int x{ 0 }; // x enters scope here and can now be used within this function
+
+    doSomething();
+
+    return 0;
+} // x goes out of scope here and can no longer be used
+```
+
+**NOTE**: Variable `x` is not in scope anywhere inside of function `doSomething`. The fact that function `main` calls function `doSomething` is irrelevant in this context.
+
+### “Out of scope” vs “going out of scope”
+
+The terms “out of scope” and “going out of scope” can be confusing.
+
+An identifier is out of scope anywhere it cannot be accessed within the code. In the example above, the identifier x is in scope from its point of definition to the end of the `main` function. The identifier `x` is out of scope outside of that code region.
+
+The term “going out of scope” is typically applied to objects rather than identifiers. We say an object goes out of scope at the end of the scope (the end curly brace) in which the object was instantiated. In the example above, the object named `x` goes out of scope at the end of the function `main`.
+
+A local variable’s lifetime ends at the point where it goes out of scope, so local variables are destroyed at this point.
+
+Note that not all types of variables are destroyed when they go out of scope.
+
+**NOTE:** Remember, lifetime is a runtime property, and scope is a compile-time property.
+
+Another example:
+
+```cpp
+#include <iostream>
+
+int add(int x, int y) // x and y are created and enter scope here
+{
+    // x and y are usable only within add()
+    return x + y;
+} // y and x go out of scope and are destroyed here
+
+int main()
+{
+    int a{ 5 }; // a is created, initialized, and enters scope here
+    int b{ 6 }; // b is created, initialized, and enters scope here
+
+    // a and b are usable only within main()
+
+    std::cout << add(a, b) << '\n'; // calls add(5, 6), where x=5 and y=6
+
+    return 0;
+} // b and a go out of scope and are destroyed here
+```
+
+### Where to define local variables
+
+In modern C++, the best practice is that local variables inside the function body should be defined as close to their first use as reasonable:
+
+```cpp
+#include <iostream>
+
+int main()
+{
+	std::cout << "Enter an integer: ";
+	int x{};       // x defined here
+	std::cin >> x; // and used here
+
+	std::cout << "Enter another integer: ";
+	int y{};       // y defined here
+	std::cin >> y; // and used here
+
+	int sum{ x + y }; // sum can be initialized with intended value
+	std::cout << "The sum is: " << sum << '\n';
+
+	return 0;
+}
+```
+
+### When to use function parameters vs Local variables
+
+Using a function parameter when you should use a local variable leads to code looking like this:
+
+```cpp
+#include <iostream>
+
+int getValueFromUser(int val) // val is a function parameter
+{
+    std::cout << "Enter a value: ";
+    std::cin >> val;
+    return val;
+}
+
+int main()
+{
+    int x {};
+    int num { getValueFromUser(x) }; // main must pass x as an argument
+
+    std::cout << "You entered " << num << '\n';
+
+    return 0;
+}
+```
+In the above example, `getValueFromUser()` has defined `val` as a function parameter. Because of this, `main()` must define `x` so that it has something to pass as an argument. However, the actual value of `x` is never used, and the value that `val` is initialized with is never used. Making the caller define and pass a variable that is never used adds needless complexity.
+
+The correct way to write this would be as follows:
+
+```cpp
+#include <iostream>
+
+int getValueFromUser()
+{
+    int val {}; // val is a local variable
+    std::cout << "Enter a value: ";
+    std::cin >> val;
+    return val;
+}
+
+int main()
+{
+    int num { getValueFromUser() }; // main does not need to pass anything
+
+    std::cout << "You entered " << num << '\n';
+
+    return 0;
+}
+```
+
+In this example, `val` is now a local variable. `main()` is now simpler because it does not need to define or pass a variable to call `getValueFromUser()`.
+
+## Temporary object
+
+A **temporary object** (also sometimes called an **anonymous object**) is an unnamed object that is used to hold a value that is only needed for a short period of time. Temporary objects are generated by the compiler when they are needed.
+
+There are many different ways that temporary values can be created, but here’s a common one:
+
+```cpp
+#include <iostream>
+
+int getValueFromUser()
+{
+ 	std::cout << "Enter an integer: ";
+	int input{};
+	std::cin >> input;
+
+	return input; // return the value of input back to the caller
+}
+
+int main()
+{
+	std::cout << getValueFromUser() << '\n'; // where does the returned value get stored?
+
+	return 0;
+}
+```
+In the above program, the function `getValueFromUser()` returns the value stored in local variable `input` back to the caller. Because `input` will be destroyed at the end of the function, the caller receives a copy of the value so that it has a value it can use even after `input` is destroyed.
+
+But where is the value that is copied back to the caller stored? We haven’t defined any variables in `main()`. The answer is that the return value is stored in a temporary object. This temporary object is then passed to `std::cout` to be printed.
+
+**Key insight:** Return by value returns a temporary object (that holds a copy of the return value) to the caller.
+
+Temporary objects have no scope at all (this makes sense, since scope is a property of an identifier, and temporary objects have no identifier).
+
+Temporary objects are destroyed at the end of the full expression in which they are created. This means temporary objects are always destroyed before the next statement executes.
+
+In our example above, the temporary object created to hold the return value of `getValueFromUser()` is destroyed after `std::cout << getValueFromUser() << '\n'` executes.
+
+In the case where a temporary object is used to initialize a variable, the initialization happens before the destruction of the temporary.
+
+In modern C++ (especially since C++17), the compiler has many tricks to avoid generating temporaries where previously it would have needed to. For example, when we use a return value to initialize a variable, this would normally result in the creation of a temporary holding the return value, and then using the temporary to initialize the variable. However, in modern C++, the compiler will often skip creating the temporary and just initialize the variable directly with the return value.
+
+Similarly, in the above example, since the return value of `getValueFromUser()` is immediately output, the compiler can skip creation and destruction of the temporary in `main()`, and use the return value of `getValueFromUser()` to directly initialize the parameter of `operator<<`.
+
+**On a side note:** When a function becomes too long, too complicated, or hard to understand, it can be split into multiple sub-functions. This is called refactoring.
+
+# Forward declarations and definitions
+
+Take a look at this seemingly innocent sample program:
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    std::cout << "The sum of 3 and 4 is: " << add(3, 4) << '\n';
+    return 0;
+}
+
+int add(int x, int y)
+{
+    return x + y;
+}
+```
+
+it doesn’t compile at all! It produces compile error.
+
+The reason this program doesn’t compile is because the compiler compiles the contents of code files sequentially. When the compiler reaches the function call add() on line 5 of main, it doesn’t know what add is, because we haven’t defined add until line 9! That produces the error, identifier not found.
+
+To fix this problem, we need to address the fact that the compiler doesn’t know what add is. There are two common ways to address the issue.
+
+### Option 1: Reorder the function definitions
+
+One way to address the issue is to reorder the function definitions so add is defined before main:
+
+```cpp
+#include <iostream>
+
+int add(int x, int y)
+{
+    return x + y;
+}
+
+int main()
+{
+    std::cout << "The sum of 3 and 4 is: " << add(3, 4) << '\n';
+    return 0;
+}
+```
+
+That way, by the time main calls add, the compiler will already know what add is. Because this is such a simple program, this change is relatively easy to do. However, in a larger program, it can be tedious trying to figure out which functions call which other functions (and in what order) so they can be declared sequentially.
+
+Furthermore, this option is not always possible. Let’s say we’re writing a program that has two functions A and B. If function A calls function B, and function B calls function A, then there’s no way to order the functions in a way that will make the compiler happy. If you define A first, the compiler will complain it doesn’t know what B is. If you define B first, the compiler will complain that it doesn’t know what A is.
+
+### Option 2: Use a forward declaration
+
+We can also fix this by using a forward declaration.
+
+A **forward declaration** allows us to tell the compiler about the existence of an identifier before actually defining the identifier.
+
+In the case of functions, this allows us to tell the compiler about the existence of a function before we define the function’s body. This way, when the compiler encounters a call to the function, it’ll understand that we’re making a function call, and can check to ensure we’re calling the function correctly, even if it doesn’t yet know how or where the function is defined.
+
+To write a forward declaration for a function, we use a **function declaration** statement (also called a **function prototype**). The function declaration consists of the function’s return type, name, and parameter types, terminated with a semicolon. The names of the parameters can be optionally included. The function body is not included in the declaration.
+
+Here’s a function declaration for the add function:
+
+```cpp
+int add(int x, int y); // function declaration includes return type, name, parameters, and semicolon.  No function body!
+```
+
+here’s our original program that didn’t compile, using a function declaration as a forward declaration for function add:
+
+```cpp
+#include <iostream>
+
+int add(int x, int y); // forward declaration of add() (using a function declaration)
+
+int main()
+{
+    std::cout << "The sum of 3 and 4 is: " << add(3, 4) << '\n'; // this works because we forward declared add() above
+    return 0;
+}
+
+int add(int x, int y) // even though the body of add() isn't defined until here
+{
+    return x + y;
+}
+```
+
+It is worth noting that function declarations do not need to specify the names of the parameters (as they are not considered to be part of the function declaration). In the above code, you can also forward declare your function like this:
+
+```cpp
+int add(int, int); // valid function declaration
+```
+
+## Why forward declarations?
+
+You may be wondering why we would use a forward declaration if we could just reorder the functions to make our programs work.
+
+Most often, forward declarations are used to tell the compiler about the existence of some function that has been defined in a different code file. Reordering isn’t possible in this scenario because the caller and the callee are in completely different files! 
+
+Forward declarations can also be used to define our functions in an order-agnostic manner. This allows us to define functions in whatever order maximizes organization (e.g. by clustering related functions together) or reader understanding.
+
+Less often, there are times when we have two functions that call each other. Reordering isn’t possible in this case either, as there is no way to reorder the functions such that each is before the other. Forward declarations give us a way to resolve such circular dependencies.
+
+### Forgetting the function body
+
+What happens if they forward declare a function but do not define it.
+
+The answer is: it depends. If a forward declaration is made, but the function is never called, the program will compile and run fine. However, if a forward declaration is made and the function is called, but the program never defines the function, the program will compile okay, but the linker will complain that it can’t resolve the function call.
+
+Forward declarations are most often used with functions. However, forward declarations can also be used with other identifiers in C++, such as variables and types.
+
+## Declarations vs. definitions
+
+A **declaration** tells the compiler about the existence of an identifier and its associated type information.
+
+Example:
+
+```cpp
+int add(int x, int y); // tells the compiler about a function named "add" that takes two int parameters and returns an int.  No body!. A pure declaration.
+int x;                 // tells the compiler about an integer variable named x
+```
+
+A **definition** is a declaration that actually implements (for functions and types) or instantiates (for variables) the identifier.
+
+Example:
+
+```cpp
+// because this function has a body, it is an implementation of function add()
+int add(int x, int y)
+{
+    int z{ x + y };   // instantiates variable z
+
+    return z;
+}
+
+int x;                // instantiates variable x
+```
+
+**NOTE:** In C++, all definitions are declarations. Therefore int x; is both a definition and a declaration. Conversely, not all declarations are definitions. Declarations that aren’t definitions are called pure declarations. Types of pure declarations include forward declarations for function, variables, and types.
+
+When the compiler encounters an identifier, it will check to ensure use of that identifier is valid (e.g. that the identifier is in scope, that it is used in a syntactically valid manner, etc…).
+
+In most cases, a declaration is sufficient to allow the compiler to ensure an identifier is being used properly. For example, when the compiler encounters function call add(5, 6), if it has already seen the declaration for `add(int, int)`, then it can validate that `add` is actually a function that takes two `int` parameters. It does not need to have actually seen the definition for function `add` (which may exist in some other file).
+
+However, there are a few cases where the compiler must be able to see a full definition in order to use an identifier (such as for template definitions and type definitions)
+
+## The one definition rule (ODR) 
+
+The one definition rule (or ODR for short) is a well-known rule in C++. The ODR has three parts:
+
+1. Within a file, each function, variable, type, or template in a given scope can only have one definition. Definitions occurring in different scopes (e.g. local variables defined inside different functions, or functions defined inside different namespaces) do not violate this rule.
+
+2. Within a program, each function or variable in a given scope can only have one definition. This rule exists because programs can have more than one file. Functions and variables not visible to the linker are excluded from this rule.
+
+3. Types, templates, inline functions, and inline variables are allowed to have duplicate definitions in different files, so long as each definition is identical.
+
+Violating part 1 of the ODR will cause the compiler to issue a redefinition error. Violating ODR part 2 will cause the linker to issue a redefinition error. Violating ODR part 3 will cause undefined behavior.
+
+Here’s an example of a violation of part 1:
+
+```cpp
+int add(int x, int y)
+{
+     return x + y;
+}
+
+int add(int x, int y) // violation of ODR, we've already defined function add(int, int)
+{
+     return x + y;
+}
+
+int main()
+{
+    int x{};
+    int x{ 5 }; // violation of ODR, we've already defined x
+}
+```
+
+In this example, function `add(int, int)` is defined twice (in the global scope), and local variable `int x` is defined twice (in the scope of `main()`). The following error is shown:
+
+```
+project3.cpp(9): error C2084: function 'int add(int,int)' already has a body
+project3.cpp(3): note: see previous definition of 'add'
+project3.cpp(16): error C2086: 'int x': redefinition
+project3.cpp(15): note: see declaration of 'x'
+```
+
+However, it is not a violation of ODR part 1 for `main()` to have a local variable defined as `int x` and `add()` to also have a function parameter defined as `int x`. These definitions occur in different scopes (in the scope of each respective function), so they are considered to be separate definitions for two distinct objects, not a definition and redefinition of the same object.
+
+Functions that share an identifier but have different sets of parameters are also considered to be distinct functions, so such definitions do not violate the ODR.
+
+### An extra note for program with separate files
+
+Remember, the compiler compiles each file individually. It does not know about the contents of other code files, or remember anything it has seen from previously compiled code files.
+
+This limited visibility and short memory is intentional, for a few reasons:
+
+1. It allows the source files of a project to be compiled in any order.
+2. When we change a source file, only that source file needs to be recompiled.
+3. It reduces the possibility of naming conflicts between identifiers in different files.
+
+# Naming collisions and an introduction to namespaces
+
+C++ requires that all identifiers be non-ambiguous. If two identical identifiers are introduced into the same program in a way that the compiler or linker can’t tell them apart, the compiler or linker will produce an error. This error is generally referred to as a **naming collision** (or **naming conflict**).
+
+If the colliding identifiers are introduced into the same file, the result will be a compiler error. If the colliding identifiers are introduced into separate files belonging to the same program, the result will be a linker error.
+
+Most naming collisions occur in two cases:
+
+1. Two (or more) identically named functions (or global variables) are introduced into separate files belonging to the same program. This will result in a linker error, as shown above.
+
+2. Two (or more) identically named functions (or global variables) are introduced into the same file. This will result in a compiler error.
+
+As programs get larger and use more identifiers, the odds of a naming collision being introduced increases significantly. The good news is that C++ provides plenty of mechanisms for avoiding naming collisions. Local scope, which keeps local variables defined inside functions from conflicting with each other, is one such mechanism. But local scope doesn’t work for function names. So how do we keep function names from conflicting with each other?
+
+## Scope regions
+
+A scope region is an area of source code where all declared identifiers are considered distinct from names declared in other scopes (much like the cities in our analogy). Two identifiers with the same name can be declared in separate scope regions without causing a naming conflict. However, within a given scope region, all identifiers must be unique, otherwise a naming collision will result.
+The body of a function is one example of a scope region. 
+
+### Namespaces
+
+A **namespace** provides another type of scope region (called **namespace scope**) that allows you to declare names inside of it for the purpose of disambiguation. Any names declared inside the namespace won’t be mistaken for identical names in other scopes.
+
+Unlike functions (which are designed to contain executable statements), only declarations and definitions can appear in the scope of a namespace. For example, two identically named functions can be defined inside separate namespaces, and no naming collision will occur.
+
+Namespaces are often used to group related identifiers in a large project to help ensure they don’t inadvertently collide with other identifiers. For example, if you put all your math functions in a namespace named `math`, then your math functions won’t collide with identically named functions outside the `math` namespace.
+
+### The global namespace
+
+In C++, any name that is not defined inside a class, function, or a namespace is considered to be part of an implicitly-defined namespace called the **global namespace** (sometimes also called the **global scope**).
+
+Two things you should know:
+
+* Identifiers declared inside the global scope are in scope from the point of declaration to the end of the file.
+
+* Although variables can be defined in the global namespace, this should generally be avoided 
+
+For example:
+
+```cpp
+#include <iostream> // imports the declaration of std::cout into the global scope
+
+// All of the following statements are part of the global namespace
+
+void foo();    // okay: function forward declaration
+int x;         // compiles but strongly discouraged: non-const global variable definition (without initializer)
+int y { 5 };   // compiles but strongly discouraged: non-const global variable definition (with initializer)
+x = 5;         // compile error: executable statements are not allowed in namespaces
+
+int main()     // okay: function definition
+{
+    return 0;
+}
+
+void goo();    // okay: A function forward declaration
+```
+
+### The std namespace
+
+When C++ was originally designed, all of the identifiers in the C++ standard library (including `std::cin` and `std::cout`) were available to be used without the `std::` prefix (they were part of the global namespace). However, this meant that any identifier in the standard library could potentially conflict with any name you picked for your own identifiers (also defined in the global namespace). Code that was once working might suddenly have a naming conflict when you include a different part of the standard library. Or worse, code that compiled under one version of C++ might not compile under the next version of C++, as new identifiers introduced into the standard library could have a naming conflict with already written code. So C++ moved all of the functionality in the standard library into a namespace named `std` (short for “standard”).
+
+It turns out that `std::cout`‘s name isn’t really `std::cout`. It’s actually just `cout`, and `std` is the name of the namespace that identifier `cout` is part of. Because `cout` is defined in the `std` namespace, the name `cout` won’t conflict with any objects or functions named `cout` that we create outside of the `std` namespace (such as in the global namespace).
+
+When you use an identifier that is defined inside a non-global namespace (e.g. the `std` namespace), you need to tell the compiler that the identifier lives inside the namespace.”
+
+* The most straightforward way to tell the compiler that we want to use cout from the std namespace is by explicitly using the `std::` prefix
+
+For example:
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    std::cout << "Hello world!"; // when we say cout, we mean the cout defined in the std namespace
+    return 0;
+}
+```
+The :: symbol is an operator called the **scope resolution operator**. The identifier to the left of the :: symbol identifies the namespace that the name to the right of the :: symbol is contained within. If no identifier to the left of the :: symbol is provided, the global namespace is assumed.
+
+So when we say `std::cout` we’re saying "the `cout` that is declared in namespace `std`".
+
+This is the safest way to use `cout`, because there’s no ambiguity about which `cout` we’re referencing (the one in the `std` namespace).
+
+When an identifier includes a namespace prefix, the identifier is called a `qualified name`.
+
+* Using namespace std (and why to avoid it)
+Another way to access identifiers inside a namespace is to use a using-directive statement. Here’s our original “Hello world” program with a using-directive:
+
+```cpp
+#include <iostream>
+
+using namespace std; // this is a using-directive that allows us to access names in the std namespace with no namespace prefix
+
+int main()
+{
+    cout << "Hello world!";
+    return 0;
+}
+```
+
+A **using directive** allows us to access the names in a namespace without using a namespace prefix. So in the above example, when the compiler goes to determine what identifier `cout` is, it will match with `std::cout`, which, because of the using-directive, is accessible as just `cout`.
+
+Many texts, tutorials, and even some IDEs recommend or use a using-directive at the top of the program. However, used in this way, this is a bad practice, and highly discouraged.
+
+Consider the following program:
+
+```cpp
+#include <iostream> // imports the declaration of std::cout into the global scope
+
+using namespace std; // makes std::cout accessible as "cout"
+
+int cout() // defines our own "cout" function in the global namespace
+{
+    return 5;
+}
+
+int main()
+{
+    cout << "Hello, world!"; // Compile error!  Which cout do we want here?  The one in the std namespace or the one we defined above?
+
+    return 0;
+}
+```
+
+The above program doesn’t compile, because the compiler now can’t tell whether we want the `cout` function that we defined, or `std::cout`.
+
+When using a using-directive in this manner, any identifier we define may conflict with any identically named identifier in the `std` namespace. Even worse, while an identifier name may not conflict today, it may conflict with new identifiers added to the std namespace in future language revisions. This was the whole point of moving all of the identifiers in the standard library into the `std` namespace in the first place!
+
+# Introduction to the preprocessor
+
+Prior to compilation, each code (.cpp) file goes through a **preprocessing** phase. In this phase, a program called the **preprocessor** makes various changes to the text of the code file. The preprocessor does not actually modify the original code files in any way -- rather, all changes made by the preprocessor happen either temporarily in-memory or using temporary files.
+
+Most of what the preprocessor does is fairly uninteresting. For example, it strips out comments, and ensures each code file ends in a newline. However, the preprocessor does have one very important role: it is what processes `#include` directives.
+
+When the preprocessor has finished processing a code file, the result is called a **translation unit**. This translation unit is what is then compiled by the compiler.
+
+**NOTE:** The entire process of preprocessing, compiling, and linking is called **translation**.
+
+## Preprocessor directives
+
+When the preprocessor runs, it scans through the code file (from top to bottom), looking for preprocessor directives. **Preprocessor directives** (often just called directives) are instructions that start with a # symbol and end with a newline (NOT a semicolon). These directives tell the preprocessor to perform certain text manipulation tasks. Note that the preprocessor does not understand C++ syntax -- instead, the directives have their own syntax (which in some cases resembles C++ syntax, and in other cases, not so much).
+
+The final output of the preprocessor contains no directives -- only the output of the processed directive is passed to the compiler.
+
+`Using directives` are not preprocessor directives (and thus are not processed by the preprocessor). So while the term `directive` usually means a `preprocessor directive`, this is not always the case.
+
+### #include
+
+When you #include a file, the preprocessor replaces the #include directive with the contents of the included file. The included contents are then preprocessed (which may result in additional #includes being preprocessed recursively), then the rest of the file is preprocessed.
+
+Consider the following program:
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    std::cout << "Hello, world!\n";
+    return 0;
+}
+```
+
+When the preprocessor runs on this program, the preprocessor will replace `#include <iostream>` with the contents of the file named “iostream” and then preprocess the included content and the rest of the file.
+
+`#include` is almost exclusively used to include header files.
+
+### Macro defines
+
+The **#define directive** can be used to create a macro. In C++, a **macro** is a rule that defines how input text is converted into replacement output text.
+
+There are two basic types of macros: object-like macros, and function-like macros.
+
+Function-like macros act like functions, and serve a similar purpose. Their use is generally considered unsafe, and almost anything they can do can be done by a normal function.
+
+Object-like macros can be defined in one of two ways:
+
+```
+#define IDENTIFIER
+#define IDENTIFIER substitution_text
+```
+
+The top definition has no substitution text, whereas the bottom one does. Because these are preprocessor directives (not statements), note that neither form ends with a semicolon.
+
+The identifier for a macro uses the same naming rules as normal identifiers: they can use letters, numbers, and underscores, cannot start with a number, and should not start with an underscore. By convention, macro names are typically all upper-case, separated by underscores.
+
+#### Object-like macros with substitution text
+
+When the preprocessor encounters this directive, an association is made between the macro identifier and substitution_text. All further occurrences of the macro identifier (outside of use in other preprocessor commands) are replaced by the substitution_text.
+
+Consider the following program:
+
+```cpp
+#include <iostream>
+
+#define MY_NAME "Alex"
+
+int main()
+{
+    std::cout << "My name is: " << MY_NAME << '\n';
+
+    return 0;
+}
+```
+
+The preprocessor converts the above into the following:
+
+```cpp
+// The contents of iostream are inserted here
+
+int main()
+{
+    std::cout << "My name is: " << "Alex" << '\n';
+
+    return 0;
+}
+```
+
+Which, when run, prints the output `My name is: Alex`.
+
+Object-like macros with substitution text were used (in C) as a way to assign names to literals. This is no longer necessary, as better methods are available in C++. Object-like macros with substitution text are now mostly
+seen in legacy code, and we recommend avoiding them whenever possible.
+
+#### Object-like macros without substitution text
+
+Object-like macros can also be defined without substitution text.
+
+For example:
+
+```
+#define USE_YEN
+```
+
+Macros of this form work like you might expect: most further occurrences of the identifier is removed and replaced by nothing!.
+
+This might seem pretty useless, and it is useless for doing text substitution. However, that’s not what this form of the directive is generally used for.
+
+#### Conditional compilation
+
+The **conditional compilation preprocessor directives** allow you to specify under what conditions something will or won’t compile. There are quite a few different conditional compilation directives, but a few that are used the most often are: *#ifdef, #ifndef, and #endif*.
+
+The *#ifdef* preprocessor directive allows the preprocessor to check whether an identifier has been previously defined via #define. If so, the code between the #ifdef and matching #endif is compiled. If not, the code is ignored.
+
+```cpp
+#include <iostream>
+
+#define PRINT_JOE
+
+int main()
+{
+#ifdef PRINT_JOE
+    std::cout << "Joe\n"; // will be compiled since PRINT_JOE is defined
+#endif
+
+#ifdef PRINT_BOB
+    std::cout << "Bob\n"; // will be excluded since PRINT_BOB is not defined
+#endif
+
+    return 0;
+}
+```
+
+Because PRINT_JOE has been #defined, the line `std::cout << "Joe\n"` will be compiled. Because PRINT_BOB has not been #defined, the line `std::cout << "Bob\n"` will be ignored.
+
+*#ifndef* is the opposite of #ifdef, in that it allows you to check whether an identifier has NOT been *#defined* yet.
+
+```cpp
+#include <iostream>
+
+int main()
+{
+#ifndef PRINT_BOB
+    std::cout << "Bob\n";
+#endif
+
+    return 0;
+}
+```
+
+This program prints “Bob”, because PRINT_BOB was never *#defined*.
+
+In place of **#ifdef PRINT_BOB** and #ifndef PRINT_BOB, you’ll also see **#if defined(PRINT_BOB)** and **#if !defined(PRINT_BOB)**. These do the same, but use a slightly more C++-style syntax.
+
+#### if 0
+
+One more common use of conditional compilation involves using #if 0 to exclude a block of code from being compiled (as if it were inside a comment block):
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    std::cout << "Joe\n";
+
+#if 0 // Don't compile anything starting here
+    std::cout << "Bob\n";
+    std::cout << "Steve\n";
+#endif // until this point
+
+    return 0;
+}
+```
+
+The above code only prints “Joe”, because “Bob” and “Steve” are excluded from compilation by the #if 0 preprocessor directive.
+
+This provides a convenient way to “comment out” code that contains multi-line comments (which can’t be commented out using another multi-line comment due to multi-line comments being non-nestable):
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    std::cout << "Joe\n";
+
+#if 0 // Don't compile anything starting here
+    std::cout << "Bob\n";
+    /* Some
+     * multi-line
+     * comment here
+     */
+    std::cout << "Steve\n";
+#endif // until this point
+
+    return 0;
+}
+```
+
+To temporarily re-enable code that has been wrapped in an `#if 0`, you can change the `#if 0` to `#if 1`
+
+#### Macro substitution within other preprocessor commands
+
+Given the following code:
+
+```cpp
+#define PRINT_JOE
+
+int main()
+{
+#ifdef PRINT_JOE
+    std::cout << "Joe\n"; // will be compiled since PRINT_JOE is defined
+#endif
+
+    return 0;
+}
+```
+
+Since we defined *PRINT_JOE* to be nothing, how come the preprocessor didn’t replace *PRINT_JOE* in #ifdef *PRINT_JOE* with nothing and exclude the output statement from compilation?
+
+In most cases, macro substitution does not occur when a macro identifier is used within another preprocessor command.
+
+There is at least one exception to this rule: most forms of #if and #elif do macro substitution within the preprocessor command.
+
+As another example:
+
+```cpp
+#define FOO 9 // Here's a macro substitution
+
+#ifdef FOO // This FOO does not get replaced with 9 because it’s part of another preprocessor directive
+    std::cout << FOO << '\n'; // This FOO gets replaced with 9 because it's part of the normal code
+#endif
+```
+
+#### The scope of #defines
+
+Directives are resolved before compilation, from top to bottom on a file-by-file basis.
+
+Consider the following program:
+
+```cpp
+#include <iostream>
+
+void foo()
+{
+#define MY_NAME "Alex"
+}
+
+int main()
+{
+	std::cout << "My name is: " << MY_NAME << '\n';
+
+	return 0;
+}
+```
+
+Even though it looks like #define MY_NAME “Alex” is defined inside function foo, the preprocessor doesn’t understand C++ concepts like functions. Therefore, this program behaves identically to one where #define MY_NAME “Alex” was defined either before or immediately after function foo. To avoid confusion, you’ll generally want to #define identifiers outside of functions.
+
+Because an #include directive replaces the #include directive with the content of the included file, an #include can copy directives from the included file into the current file. These directives will then be processed in order.
+
+For example, the following also behaves identically to the prior examples:
+
+Alex.h:
+
+```cpp
+#define MY_NAME "Alex"
+```
+
+main.cpp:
+
+```cpp
+#include "Alex.h" // copies #define MY_NAME from Alex.h here
+#include <iostream>
+
+int main()
+{
+	std::cout << "My name is: " << MY_NAME << '\n'; // preprocessor replaces MY_NAME with "Alex"
+
+	return 0;
+}
+```
+
+Once the preprocessor has finished, all defined identifiers from that file are discarded. This means that directives are only valid from the point of definition to the end of the file in which they are defined. Directives defined in one file do not have any impact on other files (unless they are #included into another file). For example:
+
+function.cpp:
+
+```cpp
+#include <iostream>
+
+void doSomething()
+{
+#ifdef PRINT
+    std::cout << "Printing!\n";
+#endif
+#ifndef PRINT
+    std::cout << "Not printing!\n";
+#endif
+}
+```
+
+main.cpp:
+
+```cpp
+void doSomething(); // forward declaration for function doSomething()
+
+#define PRINT
+
+int main()
+{
+    doSomething();
+
+    return 0;
+}
+```
+
+The above program will print:
+
+```
+Not printing!
+```
+
+Even though PRINT was defined in main.cpp, that doesn’t have any impact on any of the code in function.cpp (PRINT is only #defined from the point of definition to the end of main.cpp).
