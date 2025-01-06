@@ -1171,6 +1171,7 @@ int main()
     return 0;
 }
 ```
+
 In the above example, `getValueFromUser()` has defined `val` as a function parameter. Because of this, `main()` must define `x` so that it has something to pass as an argument. However, the actual value of `x` is never used, and the value that `val` is initialized with is never used. Making the caller define and pass a variable that is never used adds needless complexity.
 
 The correct way to write this would be as follows:
@@ -1223,6 +1224,7 @@ int main()
 	return 0;
 }
 ```
+
 In the above program, the function `getValueFromUser()` returns the value stored in local variable `input` back to the caller. Because `input` will be destroyed at the end of the function, the caller receives a copy of the value so that it has a value it can use even after `input` is destroyed.
 
 But where is the value that is copied back to the caller stored? We haven’t defined any variables in `main()`. The answer is that the return value is stored in a temporary object. This temporary object is then passed to `std::cout` to be printed.
@@ -1336,7 +1338,7 @@ int add(int, int); // valid function declaration
 
 You may be wondering why we would use a forward declaration if we could just reorder the functions to make our programs work.
 
-Most often, forward declarations are used to tell the compiler about the existence of some function that has been defined in a different code file. Reordering isn’t possible in this scenario because the caller and the callee are in completely different files! 
+Most often, forward declarations are used to tell the compiler about the existence of some function that has been defined in a different code file. Reordering isn’t possible in this scenario because the caller and the callee are in completely different files!
 
 Forward declarations can also be used to define our functions in an order-agnostic manner. This allows us to define functions in whatever order maximizes organization (e.g. by clustering related functions together) or reader understanding.
 
@@ -1385,7 +1387,7 @@ In most cases, a declaration is sufficient to allow the compiler to ensure an id
 
 However, there are a few cases where the compiler must be able to see a full definition in order to use an identifier (such as for template definitions and type definitions)
 
-## The one definition rule (ODR) 
+## The one definition rule (ODR)
 
 The one definition rule (or ODR for short) is a well-known rule in C++. The ODR has three parts:
 
@@ -1457,7 +1459,7 @@ As programs get larger and use more identifiers, the odds of a naming collision 
 ## Scope regions
 
 A scope region is an area of source code where all declared identifiers are considered distinct from names declared in other scopes (much like the cities in our analogy). Two identifiers with the same name can be declared in separate scope regions without causing a naming conflict. However, within a given scope region, all identifiers must be unique, otherwise a naming collision will result.
-The body of a function is one example of a scope region. 
+The body of a function is one example of a scope region.
 
 ### Namespaces
 
@@ -1473,9 +1475,9 @@ In C++, any name that is not defined inside a class, function, or a namespace is
 
 Two things you should know:
 
-* Identifiers declared inside the global scope are in scope from the point of declaration to the end of the file.
+- Identifiers declared inside the global scope are in scope from the point of declaration to the end of the file.
 
-* Although variables can be defined in the global namespace, this should generally be avoided 
+- Although variables can be defined in the global namespace, this should generally be avoided
 
 For example:
 
@@ -1505,7 +1507,7 @@ It turns out that `std::cout`‘s name isn’t really `std::cout`. It’s actual
 
 When you use an identifier that is defined inside a non-global namespace (e.g. the `std` namespace), you need to tell the compiler that the identifier lives inside the namespace.”
 
-* The most straightforward way to tell the compiler that we want to use cout from the std namespace is by explicitly using the `std::` prefix
+- The most straightforward way to tell the compiler that we want to use cout from the std namespace is by explicitly using the `std::` prefix
 
 For example:
 
@@ -1518,6 +1520,7 @@ int main()
     return 0;
 }
 ```
+
 The :: symbol is an operator called the **scope resolution operator**. The identifier to the left of the :: symbol identifies the namespace that the name to the right of the :: symbol is contained within. If no identifier to the left of the :: symbol is provided, the global namespace is assumed.
 
 So when we say `std::cout` we’re saying "the `cout` that is declared in namespace `std`".
@@ -1526,8 +1529,8 @@ This is the safest way to use `cout`, because there’s no ambiguity about which
 
 When an identifier includes a namespace prefix, the identifier is called a `qualified name`.
 
-* Using namespace std (and why to avoid it)
-Another way to access identifiers inside a namespace is to use a using-directive statement. Here’s our original “Hello world” program with a using-directive:
+- Using namespace std (and why to avoid it)
+  Another way to access identifiers inside a namespace is to use a using-directive statement. Here’s our original “Hello world” program with a using-directive:
 
 ```cpp
 #include <iostream>
@@ -1679,9 +1682,9 @@ This might seem pretty useless, and it is useless for doing text substitution. H
 
 #### Conditional compilation
 
-The **conditional compilation preprocessor directives** allow you to specify under what conditions something will or won’t compile. There are quite a few different conditional compilation directives, but a few that are used the most often are: *#ifdef, #ifndef, and #endif*.
+The **conditional compilation preprocessor directives** allow you to specify under what conditions something will or won’t compile. There are quite a few different conditional compilation directives, but a few that are used the most often are: _#ifdef, #ifndef, and #endif_.
 
-The *#ifdef* preprocessor directive allows the preprocessor to check whether an identifier has been previously defined via #define. If so, the code between the #ifdef and matching #endif is compiled. If not, the code is ignored.
+The _#ifdef_ preprocessor directive allows the preprocessor to check whether an identifier has been previously defined via #define. If so, the code between the #ifdef and matching #endif is compiled. If not, the code is ignored.
 
 ```cpp
 #include <iostream>
@@ -1704,7 +1707,7 @@ int main()
 
 Because PRINT_JOE has been #defined, the line `std::cout << "Joe\n"` will be compiled. Because PRINT_BOB has not been #defined, the line `std::cout << "Bob\n"` will be ignored.
 
-*#ifndef* is the opposite of #ifdef, in that it allows you to check whether an identifier has NOT been *#defined* yet.
+_#ifndef_ is the opposite of #ifdef, in that it allows you to check whether an identifier has NOT been _#defined_ yet.
 
 ```cpp
 #include <iostream>
@@ -1719,7 +1722,7 @@ int main()
 }
 ```
 
-This program prints “Bob”, because PRINT_BOB was never *#defined*.
+This program prints “Bob”, because PRINT_BOB was never _#defined_.
 
 In place of **#ifdef PRINT_BOB** and #ifndef PRINT_BOB, you’ll also see **#if defined(PRINT_BOB)** and **#if !defined(PRINT_BOB)**. These do the same, but use a slightly more C++-style syntax.
 
@@ -1786,7 +1789,7 @@ int main()
 }
 ```
 
-Since we defined *PRINT_JOE* to be nothing, how come the preprocessor didn’t replace *PRINT_JOE* in #ifdef *PRINT_JOE* with nothing and exclude the output statement from compilation?
+Since we defined _PRINT_JOE_ to be nothing, how come the preprocessor didn’t replace _PRINT_JOE_ in #ifdef _PRINT_JOE_ with nothing and exclude the output statement from compilation?
 
 In most cases, macro substitution does not occur when a macro identifier is used within another preprocessor command.
 
@@ -1890,3 +1893,246 @@ Not printing!
 ```
 
 Even though PRINT was defined in main.cpp, that doesn’t have any impact on any of the code in function.cpp (PRINT is only #defined from the point of definition to the end of main.cpp).
+
+# Header files
+
+C++ code files (with a .cpp extension) are not the only files commonly seen in C++ programs. The other type of file is called a header file. Header files usually have a .h extension, but you will occasionally see them with a .hpp extension or no extension at all.
+
+std::cout has been forward declared in the “iostream” header file. When we `#include <iostream>`, we’re requesting that the preprocessor copy all of the content (including forward declarations for std::cout) from the file named “iostream” into the file doing the #include.
+
+## Writing a header file
+
+Header files only consist of two parts:
+
+1. A header guard
+2. The actual content of the header file, which should be the forward declarations for all of the identifiers we want other files to be able to see.
+
+If a header file is paired with a code file (e.g. add.h with add.cpp), they should both have the same base name (add).
+
+Example:
+
+add.h:
+
+```cpp
+// 1) We really should have a header guard here, but will omit it for simplicity
+
+// 2) This is the content of the .h file, which is where the declarations go
+int add(int x, int y); // function prototype for add.h -- don't forget the semicolon!
+```
+
+In order to use this header file in main.cpp, we have to #include it (using quotes, not angle brackets).
+
+main.cpp:
+
+```cpp
+#include "add.h" // Insert contents of add.h at this point.  Note use of double quotes here.
+#include <iostream>
+
+int main()
+{
+    std::cout << "The sum of 3 and 4 is " << add(3, 4) << '\n';
+    return 0;
+}
+```
+
+add.cpp:
+
+```cpp
+#include "add.h" // Insert contents of add.h at this point.  Note use of double quotes here.
+
+int add(int x, int y)
+{
+    return x + y;
+}
+```
+An illustration below:
+
+![cpp and header files translation illustration](./images/IncludeHeader.webp)
+
+**NOTE:** Do not put function and variable definitions in your header files (for now).
+
+Defining either of these in a header file will likely result in a violation of the one-definition rule (ODR) if that header is then #included into more than one source (.cpp) file.
+
+Though there are additional kinds of definitions that can be safely defined in header files(becasue they are exempt form ODR). This includes definition from inline funtions, inline variables, types, and templates.
+
+## Source files should #include their paired header file (if one exists).
+
+In C++, it is a best practice for code files to #include their paired header file (if one exists). This allows the compiler to catch certain kinds of errors at compile time instead of link time.
+
+
+## Do not #include .cpp files 
+
+Although the preprocessor will happily do so, you should generally not #include .cpp files. These should be added to your project and compiled.
+
+There are number of reasons for this:
+
+* Doing so can cause naming collisions between source files.
+* In a large project it can be hard to avoid one definition rules (ODR) issues.
+* Any change to such a .cpp file will cause both the .cpp file and any other .cpp file that includes it to recompile, which can take a long time. Headers tend to change less often than source files.
+* It is non-conventional to do so.
+
+## Angled brackets vs double quotes 
+
+When we use angled brackets, we’re telling the preprocessor that this is a header file we didn’t write ourselves. The preprocessor will search for the header only in the directories specified by the `include directories`. The `include directories` are configured as part of your project/IDE settings/compiler settings, and typically default to the directories containing the header files that come with your compiler and/or OS. The preprocessor will not search for the header file in your project’s source code directory.
+
+When we use double-quotes, we’re telling the preprocessor that this is a header file that we wrote. The preprocessor will first search for the header file in the current directory. If it can’t find a matching header there, it will then search the `include directories`.
+
+## Headers may include other headers
+
+When your code file #includes the first header file, you’ll also get any other header files that the first header file includes (and any header files those include, and so on). These additional header files are sometimes called **transitive includes**, as they’re included implicitly rather than explicitly.
+
+The content of these transitive includes are available for use in your code file. However, you generally should not rely on the content of headers that are included transitively (unless reference documentation indicates that those transitive includes are required). The implementation of header files may change over time, or be different across different systems. If that happens, your code may only compile on certain systems, or may compile now but not in the future. This is easily avoided by explicitly including all of the header files the content of your code file requires.
+
+## The order of inclusion for header files
+
+To maximize the chance that missing includes will be flagged by compiler, order your #includes as follows (skipping any that are not relevant):
+
+* The paired header file for this code file (e.g. add.cpp should `#include "add.h"`)
+* Other headers from the same project (e.g. `#include "mymath.h"`)
+* 3rd party library headers (e.g. `#include <boost/tuple/tuple.hpp>`)
+* Standard library headers (e.g. `#include <iostream>`)
+
+# Header guards (include guard)
+
+Header guards are conditional compilation directives that take the following form:
+
+```cpp
+#ifndef SOME_UNIQUE_NAME_HERE
+#define SOME_UNIQUE_NAME_HERE
+
+// your declarations (and certain types of definitions) here
+
+#endif
+```
+
+When this header is #included, the preprocessor will check whether SOME_UNIQUE_NAME_HERE has been previously defined in this translation unit. If this is the first time we’re including the header, SOME_UNIQUE_NAME_HERE will not have been defined. Consequently, it #defines SOME_UNIQUE_NAME_HERE and includes the contents of the file. If the header is included again into the same file, SOME_UNIQUE_NAME_HERE will already have been defined from the first time the contents of the header were included, and the contents of the header will be ignored (thanks to the #ifndef).
+
+All of your header files should have header guards on them. SOME_UNIQUE_NAME_HERE can be any name you want, but by convention is set to the full filename of the header file, typed in all caps, using underscores for spaces or punctuation. For example, square.h would have the header guard:
+
+square.h:
+
+```cpp
+#ifndef SQUARE_H
+#define SQUARE_H
+
+int getSquareSides()
+{
+    return 4;
+}
+
+#endif
+```
+
+## Header guards do not prevent a header from being included once into different code files
+
+Note that the goal of header guards is to prevent a code file from receiving more than one copy of a guarded header. By design, header guards do not prevent a given header file from being included (once) into separate code files. This can also cause unexpected problems. . Consider:
+
+square.h:
+
+```cpp
+#ifndef SQUARE_H
+#define SQUARE_H
+
+int getSquareSides()
+{
+    return 4;
+}
+
+int getSquarePerimeter(int sideLength); // forward declaration for getSquarePerimeter
+
+#endif
+```
+
+square.cpp:
+
+```cpp
+#include "square.h"  // square.h is included once here
+
+int getSquarePerimeter(int sideLength)
+{
+    return sideLength * getSquareSides();
+}
+```
+
+main.cpp:
+
+```cpp
+#include "square.h" // square.h is also included once here
+#include <iostream>
+
+int main()
+{
+    std::cout << "a square has " << getSquareSides() << " sides\n";
+    std::cout << "a square of length 5 has perimeter length " << getSquarePerimeter(5) << '\n';
+
+    return 0;
+}
+```
+
+When `square.h` is included in both `main.cpp` and `square.cpp`, its contents are processed separately for each file. Header guards (e.g., `#ifndef SQUARE_H`) prevent multiple inclusions within the same file, but they do not persist across files. As a result, both `main.cpp` and `square.cpp` receive a copy of the `getSquareSides` definition, causing the linker to report multiple definitions.
+
+To fix this, place the function definition in one `.cpp` file and keep only the forward declaration in the header file. This ensures the function is defined once and avoids linker errors.
+
+square.h:
+
+```cpp
+#ifndef SQUARE_H
+#define SQUARE_H
+
+int getSquareSides(); // forward declaration for getSquareSides
+int getSquarePerimeter(int sideLength); // forward declaration for getSquarePerimeter
+
+#endif
+```
+
+square.cpp:
+
+```cpp
+#include "square.h"
+
+int getSquareSides() // actual definition for getSquareSides
+{
+    return 4;
+}
+
+int getSquarePerimeter(int sideLength)
+{
+    return sideLength * getSquareSides();
+}
+```
+
+main.cpp:
+
+```cpp
+#include "square.h" // square.h is also included once here
+#include <iostream>
+
+int main()
+{
+    std::cout << "a square has " << getSquareSides() << " sides\n";
+    std::cout << "a square of length 5 has perimeter length " << getSquarePerimeter(5) << '\n';
+
+    return 0;
+}
+```
+
+When compiled, the function `getSquareSides` has a single definition in `square.cpp`, satisfying the linker. `main.cpp` can call this function because it includes `square.h`, which provides a forward declaration. The linker connects the call in `main.cpp` to the definition in `square.cpp`.
+
+## Can’t We Just Avoid Definitions in Header Files?
+
+It is advised against including function definitions in headers, so we wonder why header guards are necessary.
+
+While you should avoid function definitions in headers, there are cases where non-function definitions, such as custom type definitions, must go in header files to be accessible to other files. Without header guards, a code file could end up with multiple identical copies of a type definition, leading to compiler errors.
+
+Even though header guards might seem unnecessary now, using them establishes good habits and prevents issues as your programs become more complex.
+
+## #pragma once
+
+Modern compilers support a simpler, alternate form of header guards using the `#pragma` preprocessor directive:
+
+```cpp
+#pragma once
+
+// your code here
+```
+`#pragma once` serves the same purpose as header guards: to avoid a header file from being included multiple times. With traditional header guards, the developer is responsible for guarding the header (by using preprocessor directives `#ifndef`, `#define`, and `#endif`). With `#pragma once`, we’re requesting that the compiler guard the header. How exactly it does this is an implementation-specific detail.
