@@ -1722,7 +1722,7 @@ int main()
 }
 ```
 
-This program prints “Bob”, because PRINT_BOB was never _#defined_.
+This program prints “Bob”, because PRINT*BOB was never *#defined\_.
 
 In place of **#ifdef PRINT_BOB** and #ifndef PRINT_BOB, you’ll also see **#if defined(PRINT_BOB)** and **#if !defined(PRINT_BOB)**. These do the same, but use a slightly more C++-style syntax.
 
@@ -1945,6 +1945,7 @@ int add(int x, int y)
     return x + y;
 }
 ```
+
 An illustration below:
 
 ![cpp and header files translation illustration](./images/IncludeHeader.webp)
@@ -1959,19 +1960,18 @@ Though there are additional kinds of definitions that can be safely defined in h
 
 In C++, it is a best practice for code files to #include their paired header file (if one exists). This allows the compiler to catch certain kinds of errors at compile time instead of link time.
 
-
-## Do not #include .cpp files 
+## Do not #include .cpp files
 
 Although the preprocessor will happily do so, you should generally not #include .cpp files. These should be added to your project and compiled.
 
 There are number of reasons for this:
 
-* Doing so can cause naming collisions between source files.
-* In a large project it can be hard to avoid one definition rules (ODR) issues.
-* Any change to such a .cpp file will cause both the .cpp file and any other .cpp file that includes it to recompile, which can take a long time. Headers tend to change less often than source files.
-* It is non-conventional to do so.
+- Doing so can cause naming collisions between source files.
+- In a large project it can be hard to avoid one definition rules (ODR) issues.
+- Any change to such a .cpp file will cause both the .cpp file and any other .cpp file that includes it to recompile, which can take a long time. Headers tend to change less often than source files.
+- It is non-conventional to do so.
 
-## Angled brackets vs double quotes 
+## Angled brackets vs double quotes
 
 When we use angled brackets, we’re telling the preprocessor that this is a header file we didn’t write ourselves. The preprocessor will search for the header only in the directories specified by the `include directories`. The `include directories` are configured as part of your project/IDE settings/compiler settings, and typically default to the directories containing the header files that come with your compiler and/or OS. The preprocessor will not search for the header file in your project’s source code directory.
 
@@ -1987,10 +1987,10 @@ The content of these transitive includes are available for use in your code file
 
 To maximize the chance that missing includes will be flagged by compiler, order your #includes as follows (skipping any that are not relevant):
 
-* The paired header file for this code file (e.g. add.cpp should `#include "add.h"`)
-* Other headers from the same project (e.g. `#include "mymath.h"`)
-* 3rd party library headers (e.g. `#include <boost/tuple/tuple.hpp>`)
-* Standard library headers (e.g. `#include <iostream>`)
+- The paired header file for this code file (e.g. add.cpp should `#include "add.h"`)
+- Other headers from the same project (e.g. `#include "mymath.h"`)
+- 3rd party library headers (e.g. `#include <boost/tuple/tuple.hpp>`)
+- Standard library headers (e.g. `#include <iostream>`)
 
 # Header guards (include guard)
 
@@ -2135,4 +2135,238 @@ Modern compilers support a simpler, alternate form of header guards using the `#
 
 // your code here
 ```
+
 `#pragma once` serves the same purpose as header guards: to avoid a header file from being included multiple times. With traditional header guards, the developer is responsible for guarding the header (by using preprocessor directives `#ifndef`, `#define`, and `#endif`). With `#pragma once`, we’re requesting that the compiler guard the header. How exactly it does this is an implementation-specific detail.
+
+# Syntax and semantic errors
+
+Programming can be challenging, and C++ is somewhat of a quirky language. Put those two together, and there are a lot of ways to make mistakes. Errors generally fall into one of two categories: syntax errors, and semantic errors (logic errors).
+
+## Syntax errors
+
+A **syntax error** occurs when you write a statement that is not valid according to the grammar of the C++ language. This includes errors such as missing semicolons, mismatched parentheses or braces, etc…
+
+## Semantic errors
+
+A semantic error is an error in meaning. These occur when a statement is syntactically valid, but either violates other rules of the language, or does not do what the programmer intended.
+
+Some kind of semantic errors can be caught by the compiler. Common examples include using an undeclared variable, type mismatches (when we use an object with the wrong type somewhere), etc…
+
+For example, the following program contains several compile-time semantic errors:
+
+```cpp
+int main()
+{
+    5 = x; // x not declared, cannot assign a value to 5
+    return "hello"; // "hello" cannot be converted to an int
+}
+```
+
+Other semantic errors only manifest at runtime. Sometimes these will cause your program to crash, such as in the case of division by zero:
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    int a { 10 };
+    int b { 0 };
+    std::cout << a << " / " << b << " = " << a / b << '\n'; // division by 0 is undefined in mathematics
+    return 0;
+}
+```
+
+## Basic debugging tactics
+
+### Debugging tactic #1: Commenting out your code
+
+An alternate approach to repeatedly adding/removing or uncommenting/commenting debug statements is to use a 3rd party library that will let you leave debug statements in your code but compile them out in release mode via a preprocessor macro. dbg is one such header-only library that exists to help facilitate this (via the `DBG_MACRO_DISABLE` preprocessor macro).
+
+### Debugging tactic #2: Validating your code flow
+
+Another problem common in more complex programs is that the program is calling a function too many or too few times (including not at all).
+
+In such cases, it can be helpful to place statements at the top of your functions to print the function’s name. That way, when the program runs, you can see which functions are getting called.
+
+**TIP**:
+
+- When printing information for debugging purposes, use `std::cerr` instead of `std::cout`.
+
+- When adding temporary debug statements, it can be helpful to not indent them. This makes them easier to find for removal later.
+
+### Debugging tactic #3: Printing values
+
+With some types of bugs, the program may be calculating or passing the wrong value.
+
+We can also output the value of variables (including parameters) or expressions to ensure that they are correct.
+
+## More debugging tactics
+
+### Conditionalizing your debugging code
+
+When you’re done with the debugging statement, you’ll either need to remove them, or comment them out. Then if you want them again later, you’ll have to add them back, or uncomment them.
+
+One way to make it easier to disable and enable debugging throughout your program is to make your debugging statements conditional using preprocessor directives:
+
+```cpp
+#include <iostream>
+
+#define ENABLE_DEBUG // comment out to disable debugging
+
+int getUserInput()
+{
+#ifdef ENABLE_DEBUG
+std::cerr << "getUserInput() called\n";
+#endif
+	std::cout << "Enter a number: ";
+	int x{};
+	std::cin >> x;
+	return x;
+}
+
+int main()
+{
+#ifdef ENABLE_DEBUG
+std::cerr << "main() called\n";
+#endif
+    int x{ getUserInput() };
+    std::cout << "You entered: " << x << '\n';
+
+    return 0;
+}
+```
+
+Now we can enable debugging simply by commenting / uncommenting #define ENABLE_DEBUG. This allows us to reuse previously added debug statements and then just disable them when we’re done with them, rather than having to actually remove them from the code. If this were a multi-file program, the #define ENABLE_DEBUG would go in a header file that’s included into all code files so we can comment / uncomment the #define in a single location and have it propagate to all code files.
+
+### Using a logger
+
+An alternative approach to conditionalized debugging via the preprocessor is to send your debugging information to a log. A **log** is a sequential record of events that have happened, usually time-stamped. The process of generating a log is called **logging**. Typically, logs are written to a file on disk (called a **log file**) so they can be reviewed later. Most applications and operating systems write log files that can be used to help diagnose issues that occur.
+
+C++ contains an output stream named `std::clog` that is intended to be used for writing logging information. However, by default, `std::clog` writes to the standard error stream (the same as `std::cerr`). And while you can redirect it to file instead, this is one area where you’re generally better off using one of the many existing third-party logging tools available. Which one you use is up to you.
+
+outputting to a logger looks like using the **plog** logger. Plog is implemented as a set of header files, so it’s easy to include anywhere you need it, and it’s lightweight and easy to use.
+
+```cpp
+#include <plog/Log.h> // Step 1: include the logger headers
+#include <plog/Initializers/RollingFileInitializer.h>
+#include <iostream>
+
+int getUserInput()
+{
+	PLOGD << "getUserInput() called"; // PLOGD is defined by the plog library
+
+	std::cout << "Enter a number: ";
+	int x{};
+	std::cin >> x;
+	return x;
+}
+
+int main()
+{
+	plog::init(plog::debug, "Logfile.txt"); // Step 2: initialize the logger
+
+	PLOGD << "main() called"; // Step 3: Output to the log as if you were writing to the console
+
+	int x{ getUserInput() };
+	std::cout << "You entered: " << x << '\n';
+
+	return 0;
+}
+```
+
+Here’s output from the above logger (in the Logfile.txt file):
+
+```
+2018-12-26 20:03:33.295 DEBUG [4752] [main@19] main() called
+2018-12-26 20:03:33.296 DEBUG [4752] [getUserInput@7] getUserInput() called
+```
+
+with plog, logging can be temporarily disabled by changing the init statement to the following:
+
+```cpp
+plog::init(plog::none , "Logfile.txt"); // plog::none eliminates writing of most messages, essentially turning logging off
+```
+
+**TIP:** In larger or performance-sensitive projects, faster and more feature-rich loggers may be preferred, such as **spdlog**.
+
+# Using an integrated debugger: Stepping
+
+When you run your program, execution begins at the top of the main function, and then proceeds sequentially statement by statement, until the program ends. At any point in time while your program is running, the program is keeping track of a lot of things: the value of the variables you’re using, which functions have been called (so that when those functions return, the program will know where to go back to), and the current point of execution within the program (so it knows which statement to execute next). All of this tracked information is called your **program state** (or just state, for short).
+
+## The debugger
+
+A **debugger** is a computer program that allows the programmer to control how another program executes and examine the program state while that program is running. For example, the programmer can use a debugger to execute a program line by line, examining the value of variables along the way. By comparing the actual value of variables to what is expected, or watching the path of execution through the code, the debugger can help immensely in tracking down semantic (logic) errors.
+
+The power behind the debugger is twofold: the ability to precisely control execution of the program, and the ability to view (and modify, if desired) the program’s state.
+
+**Extra Read**
+
+Initially, debuggers (such as gdb) were separate programs that had command-line interfaces, where the programmer had to type arcane commands to make them work. Later debuggers (such as early versions of Borland’s turbo debugger) were still separate programs, but supplied a “graphical” front end to make working with them easier. These days, many modern IDEs have an integrated debugger -- that is, a debugger that uses the same interface as the code editor, so you can debug using the same environment that you use to write your code (rather than having to switch programs).
+
+While integrated debuggers are highly convenient and recommended for beginners, command line debuggers are well supported and still commonly used in environments that do not support graphical interfaces (e.g. embedded systems).
+
+### Stepping
+
+Stepping is the name for a set of related debugger features that let us execute (step through) our code statement by statement.
+
+#### 1. Step into
+
+The **step** into command executes the next statement in the normal execution path of the program, and then pauses execution of the program so we can examine the program’s state using the debugger. If the statement being executed contains a function call, step into causes the program to jump to the top of the function being called, where it will pause.
+
+#### 2. Step over
+
+Like step into, The **step over** command executes the next statement in the normal execution path of the program. However, whereas step into will enter function calls and execute them line by line, step over will execute an entire function without stopping and return control to you after the function has been executed.
+
+#### 3. Step out
+
+Unlike the other two stepping commands, **Step out** does not just execute the next line of code. Instead, it executes all remaining code in the function currently being executed, and then returns control to you when the function has returned.
+
+#### 4. Step back (provided by IDE's like visual studio enterprise edition and rr)
+
+Some debuggers (such as Visual Studio Enterprise Edition and rr) have introduced a stepping capability generally referred to as step back or reverse debugging. The goal of a step back is to rewind the last step, so you can return the program to a prior state. This can be useful if you overstep, or if you want to re-examine a statement that just executed.
+
+mplementing step back requires a great deal of sophistication on the part of the debugger (because it has to keep track of a separate program state for each step). Because of the complexity, this capability isn’t standardized yet, and varies by debugger.
+
+### Using an integrated debugger: Running and breakpoints
+
+While stepping is useful for examining each individual line of your code in isolation, in a large program, it can take a long time to step through your code to even get to the point where you want to examine in more detail.
+
+Fortunately, modern debuggers provide more tools to help us efficiently debug our programs.
+
+#### Running
+
+##### Run to cursor
+
+The first useful command is commonly called Run to cursor. This Run to cursor command executes the program until execution reaches the statement selected by your cursor. Then it returns control to you so you can debug starting at that point. This makes for an efficient way to start debugging at a particular point in your code, or if already debugging, to move straight to some place you want to examine further.
+
+##### Continue
+
+Once you’re in the middle of a debugging session, you may want to just run the program from that point forward. The easiest way to do this is to use the continue command. The **continue** debug command simply continues running the program as per normal, either until the program terminates, or until something triggers control to return back to you again (such as breakpoint)
+
+##### Start
+
+The continue command has a twin brother named start. The start command performs the same action as continue, just starting from the beginning of the program. It can only be invoked when not already in a debug session.
+
+##### breakpoints
+
+A **breakpoint** is a special marker that tells the debugger to stop execution of the program at the breakpoint when running in debug mode.
+
+#### breakpoints
+
+A **breakpoint** is a special marker that tells the debugger to stop execution of the program at the breakpoint when running in debug mode.
+
+Breakpoints have a couple of advantages over run to cursor. First, a breakpoint will cause the debugger to return control to you every time they are encountered (unlike run to cursor, which only runs to the cursor once each time it is invoked). Second, you can set a breakpoint and it will persist until you remove it, whereas with run to cursor you have to locate the spot you want to run to each time you invoke the command.
+
+#### Set next statement
+
+The **set next statement** command allows us to change the point of execution to some other statement (sometimes informally called jumping). This can be used to jump the point of execution forwards and skip some code that would otherwise execute, or backwards and have something that already executed run again.
+
+The set next statement command will change the point of execution, but will not otherwise change the program state. Your variables will retain whatever values they had before the jump. As a result, jumping may cause your program to produce different values, results, or behaviors than it would otherwise. Use this capability judiciously (especially jumping backwards).
+
+You should not use set next statement to change the point of execution to a different function. This may result in undefined behavior, and likely a crash.
+
+### “Step back” vs jumping backwards via “Set next statement”
+
+“Step back” rewinds the state of everything, as if you’d never gone past that point in the first place. Any changes to variable values or other program state is undone. This is essentially an “undo” command for stepping.
+
+“Set next statement” when used to jump backwards only changes the point of execution. Any changes to variable values or other program state are not undone.
