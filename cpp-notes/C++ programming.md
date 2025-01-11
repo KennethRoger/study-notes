@@ -2347,11 +2347,7 @@ Once you’re in the middle of a debugging session, you may want to just run the
 
 The continue command has a twin brother named start. The start command performs the same action as continue, just starting from the beginning of the program. It can only be invoked when not already in a debug session.
 
-##### breakpoints
-
-A **breakpoint** is a special marker that tells the debugger to stop execution of the program at the breakpoint when running in debug mode.
-
-#### breakpoints
+#### Breakpoints
 
 A **breakpoint** is a special marker that tells the debugger to stop execution of the program at the breakpoint when running in debug mode.
 
@@ -2370,3 +2366,107 @@ You should not use set next statement to change the point of execution to a diff
 “Step back” rewinds the state of everything, as if you’d never gone past that point in the first place. Any changes to variable values or other program state is undone. This is essentially an “undo” command for stepping.
 
 “Set next statement” when used to jump backwards only changes the point of execution. Any changes to variable values or other program state are not undone.
+
+
+## The call stack
+
+When your program calls a function, you already know that it bookmarks the current location, makes the function call, and then returns. How does it know where to return to? The answer is that it keeps track in the call stack.
+
+The **call stack** is a list of all the active functions that have been called to get to the current point of execution. The call stack includes an entry for each function called, as well as which line of code will be returned to when the function returns. Whenever a new function is called, that function is added to the top of the call stack. When the current function returns to the caller, it is removed from the top of the call stack, and control returns to the function just below it.
+
+## Refactoring your code
+
+This process of making structural changes to your code without changing its behavior is called **refactoring**. The goal of refactoring is to make your program less complex by increasing its organization and modularity.
+
+## An introduction to defensive programming
+
+**Defensive programming** is a practice whereby the programmer tries to anticipate all of the ways the software could be misused, either by end-users, or by other developers (including the programmer themselves) using the code. These misuses can often be detected and then mitigated.
+
+## Unit testing
+
+**Unit testing**, which is a software testing method by which small units of source code are tested to determine whether they are correct.
+
+As with logging frameworks, there are many 3rd party unit testing frameworks that can be used. It’s also possible to write your own, though we’ll need more language features at our disposal to do the topic justice.
+
+## Static analysis tools
+
+Static analysis tools (sometimes informally called linters) are programs that analyze your source code to identify specific semantic issues (in this context, static means that these tools analyze the source code without executing it). The issues found by static analysis tools may or may not be the cause of any particular problem you are having, but may help point out fragile areas of code or issues that can be problematic in certain circumstances.
+
+You already have one static analysis tool at your disposal -- your compiler! In addition to ensuring your program is syntactically correct, most modern C++ compilers will do some light static analysis to identify some common problems. For example, many compilers will warn you if you try to use a variable that has not been initialized. 
+
+Some commonly recommended static analysis tools include:
+
+* clang-tidy
+* cpplint
+* cppcheck
+* SonarLint
+* Coverity
+* SonarQube
+
+# Introduction to fundamental data types
+
+## Bits, bytes, and memory addressing
+
+Variables are names for a piece of memory that can be used to store information. Computers have random access memory (RAM) that is available for programs to use. When a variable is defined, a piece of that memory is set aside for that variable.
+
+The smallest unit of memory is a **binary digit** (also called a **bit**), which can hold a value of 0 or 1. 
+
+Memory is organized into sequential units called **memory addresses** (or **addresses** for short). Similar to how a street address can be used to find a given house on a street, the memory address allows us to find and access the contents of memory at a particular location.
+
+Perhaps surprisingly, in modern computer architectures, each bit does not get its own unique memory address. This is because the number of memory addresses is limited, and the need to access data bit-by-bit is rare. Instead, each memory address holds 1 byte of data. A **byte** is a group of bits that are operated on as a unit. The modern standard is that a byte is comprised of 8 sequential bits.
+
+The following picture shows some sequential memory addresses, along with the corresponding byte of data:
+
+![some sequential memory addresses, along with the corresponding byte of data](./images/MemoryAddresses.webp)
+
+## Data types
+
+Because all data on a computer is just a sequence of bits, we use a **data type** (often called a **type** for short) to tell the compiler how to interpret the contents of memory in some meaningful way. You have already seen one example of a data type: the integer. When we declare a variable as an integer, we are telling the compiler “the piece of memory that this variable uses is going to be interpreted as an integer value”.
+
+When you give an object a value, the compiler and CPU take care of encoding your value into the appropriate sequence of bits for that data type, which are then stored in memory (remember: memory can only store bits). For example, if you assign an integer object the value `65`, that value is converted to the sequence of bits `0100 0001` and stored in the memory assigned to the object.
+
+Conversely, when the object is evaluated to produce a value, that sequence of bits is reconstituted back into the original value. Meaning that `0100 0001` is converted back into the value `65`.
+
+The compiler and CPU do all the hard work here, so you generally don’t need to worry about how values get converted into bit sequences and back.
+
+All you need to do is pick a data type for your object that best matches your desired use.
+
+## Fundamental data types
+
+C++ comes with built-in support for many different data types. These are called **fundamental data types**, but are often informally called **basic types**, **primitive types**, or **built-in types**.
+
+| Types | Category | Meaning |
+| ----- | -------- | ------- |
+| float | Floating Point | a number with a fractional part |
+| double | | |
+| long double | | |
+| bool | Intergral(Boolean) | true or false |
+| char | Intergral(Character) | a single character or text |
+| wchar_t | | |
+| char8_t (C++20) | | |
+| char16_t (C++11) | | |
+| char32_t (C++11) | | |
+| short int | Intergral(Integer) | positive and negative whole numbers, including 0 |
+| int | | |
+| long int | | |
+| long long int (C++11) | | |
+| std::nullptr_t (C++11) | Null pointer | a null pointer |
+| void | Void | no type |
+
+C++ also supports a number of other more complex types, called “**compound types**”.
+
+Most modern programming languages include a fundamental **string** type (a data type that lets us hold a sequence of characters, typically used to represent text). In C++, strings aren’t a fundamental type (they’re a compound type).
+
+### Nomenclature
+
+The terms “integer” and “integral” are similar, but have slightly different meanings.
+
+In C++, the term “integer” is most often used to refer to the `int` data type, which holds integer values. However, it is also sometimes used to refer to the broader set of data types that are commonly used to store and display integer values. This includes `short`, `int`, `long`, `long long`, and their signed and unsigned variants.
+
+The term “integral” means “like an integer”. Most often, “integral” is used as part of the term “integral type”, which includes the broader set of types that are stored in memory as integers, even though their behaviors might vary. This includes bool, the integer types, and all the various character types.
+
+## The _t suffix
+
+Many of the types defined in newer versions of C++ (e.g. `std::nullptr_t`) use a _t suffix. This suffix means “type”, and it’s a common nomenclature applied to modern types.
+
+If you see something with a _t suffix, it’s probably a type. But many types don’t have a _t suffix, so this isn’t consistently applied.
