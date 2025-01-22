@@ -2649,3 +2649,147 @@ int main()
     return 0;
 }
 ```
+
+# Integers
+
+An **integer** is an integral type that can represent positive and negative whole numbers, including 0 (e.g. -2, -1, 0, 1, 2). C++ has 4 primary fundamental integer types available for use:
+
+| Type | Minimum Size | Note |
+| Short int | 16 bits | |
+| int | 16 bits | Typically 32 bits on modern architectures |
+| long int | 32 bits | |
+| long long int | 64 bits | |
+
+The key difference between the various integer types is that they have varying sizes -- the larger integers can hold bigger numbers.
+
+**NOTE**: Technically, the bool and char types are considered to be integral types (because these types store their values as integer values).
+
+## Signed integers
+
+This attribute of being positive, negative, or zero is called the number’s **sign**.
+
+By default, integers in C++ are **signed**, which means the number’s sign is stored as part of the value. Therefore, a signed integer can hold both positive and negative numbers (and 0).
+
+Here is the preferred way to define the four types of signed integers:
+
+```cpp
+short s;      // prefer "short" instead of "short int"
+int i;
+long l;       // prefer "long" instead of "long int"
+long long ll; // prefer "long long" instead of "long long int"
+```
+
+Although short int, long int, or long long int will work, we prefer the short names for these types (that do not use the int suffix). 
+
+The integer types can also take an optional signed keyword, which by convention is typically placed before the type name:
+
+```cpp
+signed short ss;
+signed int si;
+signed long sl;
+signed long long sll;
+```
+However, this keyword should not be used, as it is redundant, since integers are signed by default.
+
+## Signed integer ranges
+
+a variable with n bits can hold 2n possible values. But which specific values? We call the set of specific values that a data type can hold its **range**. The range of an integer variable is determined by two factors: its size (in bits), and whether it is signed or not.
+
+For example, an 8-bit signed integer has a range of -128 to 127. This means an 8-bit signed integer can store any integer value between -128 and 127 (inclusive) safely.
+
+| Size / Type | Range |
+| 8-bit signed | -128 to 127 |
+| 16-bit signed | -32,768 to 32,767 |
+| 32-bit signed | -2,147,483,648 to 2,147,483,647  |
+| 64-bit signed | -9,223,327,036,854,775,808 to 9,223,372,036,854,775,807 |
+
+For the math inclined, an n-bit signed variable has a range of **-(2n-1) to (2n-1)-1.**
+
+## Overflow
+
+What happens if we try to assign the value 140 to an 8-bit signed integer? This number is outside the range that an 8-bit signed integer can hold. The number 140 requires 9 bits to represent (8 magnitude bits and 1 sign bit), but we only have 8 bits (7 magnitude bits and 1 sign bit) available in an 8-bit signed integer.
+
+The C++20 standard makes this blanket statement: “If during the evaluation of an expression, the result is not mathematically defined or not in the range of representable values for its type, the behavior is undefined”. Colloquially, this is called **overflow**.
+
+Therefore, assigning value 140 to an 8-bit signed integer will result in undefined behavior.
+
+If an arithmetic operation (such as addition or multiplication) attempts to create a value outside the range that can be represented, this is called **integer overflow** (or **arithmetic overflow**). For signed integers, integer overflow will result in undefined behavior.
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    // assume 4 byte integers
+    int x { 2'147'483'647 }; // the maximum value of a 4-byte signed integer
+    std::cout << x << '\n';
+
+    x = x + 1; // integer overflow, undefined behavior
+    std::cout << x << '\n';
+
+    return 0;
+}
+```
+
+In general, overflow results in information being lost, which is almost never desirable. 
+
+## Integer division
+
+When doing division with two integers (called integer division), C++ always produces an integer result. Since integers can’t hold fractional values, any fractional portion is simply dropped (not rounded!).
+
+## Unsigned integers
+
+C++ also supports unsigned integers. **Unsigned integers** are integers that can only hold non-negative whole numbers.
+
+To define an unsigned integer, we use the `unsigned` keyword. By convention, this is placed before the type:
+
+```cpp
+unsigned short us;
+unsigned int ui;
+unsigned long ul;
+unsigned long long ull;
+```
+
+A 1-byte unsigned integer has a range of 0 to 255. Compare this to the 1-byte signed integer range of -128 to 127. Both can store 256 different values, but signed integers use half of their range for negative numbers, whereas unsigned integers can store positive numbers that are twice as large.
+
+A table showing the range for unsigned integers:
+
+| Size/Type | Range |
+| 8 bit unsigned | 0 to 255 |
+| 16 bit unsigned | 0 to 65,535 |
+| 32 bit unsigned | 0 to 4,294,967,295 |
+| 64 bit unsigned | 0 to 18,446,744,073,709,511,615 |
+
+An n-bit unsigned variable has a range of 0 to (2n)-1.
+
+* When no negative numbers are required, unsigned integers are well-suited for networking and systems with little memory, because unsigned integers can store more positive numbers without taking up extra memory.
+
+### Unsigned integer overflow
+
+What happens if we try to store the number 280 (which requires 9 bits to represent) in a 1-byte (8-bit) unsigned integer? The answer is overflow.
+
+Oddly, the C++ standard explicitly says “a computation involving unsigned operands can never overflow”. This is contrary to general programming consensus that integer overflow encompasses both signed and unsigned use cases. Given that most programmers would consider this overflow, we’ll call this overflow despite the C++ standard’s statements to the contrary.
+
+In C++, unsigned integers are treated as **modular arithmetic modulo** 2^n, where n is the number of bits in the type. For an 8-bit unsigned integer (`uint8_t`), the range is 0 to 255. Any result outside this range wraps around according to modular arithmetic.
+Example: Storing `280` in an 8-bit unsigned integer
+
+1. **Binary Representation of** `280`:
+
+```s
+280 (decimal) = 100011000 (binary)  // This requires 9 bits.
+```
+
+* An 8-bit integer can only store the last 8 bits:
+    ```s
+    100011000 → 00011000 (last 8 bits).
+    ```
+* `00011000` in binary is 2424 in decimal.
+
+So, when `280` is stored in an 8-bit unsigned integer, it wraps around and becomes 2424.
+
+2. **Mathematical Explanation**:
+
+ * Modular arithmetic is used:
+    *280 mod 256 = 24*
+
+This is **not considered overflow** by the C++ standard because the result is **well-defined and predictable** under modular arithmetic rules.
