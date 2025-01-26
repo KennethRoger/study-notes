@@ -2367,7 +2367,6 @@ You should not use set next statement to change the point of execution to a diff
 
 “Set next statement” when used to jump backwards only changes the point of execution. Any changes to variable values or other program state are not undone.
 
-
 ## The call stack
 
 When your program calls a function, you already know that it bookmarks the current location, makes the function call, and then returns. How does it know where to return to? The answer is that it keeps track in the call stack.
@@ -2392,16 +2391,16 @@ As with logging frameworks, there are many 3rd party unit testing frameworks tha
 
 Static analysis tools (sometimes informally called linters) are programs that analyze your source code to identify specific semantic issues (in this context, static means that these tools analyze the source code without executing it). The issues found by static analysis tools may or may not be the cause of any particular problem you are having, but may help point out fragile areas of code or issues that can be problematic in certain circumstances.
 
-You already have one static analysis tool at your disposal -- your compiler! In addition to ensuring your program is syntactically correct, most modern C++ compilers will do some light static analysis to identify some common problems. For example, many compilers will warn you if you try to use a variable that has not been initialized. 
+You already have one static analysis tool at your disposal -- your compiler! In addition to ensuring your program is syntactically correct, most modern C++ compilers will do some light static analysis to identify some common problems. For example, many compilers will warn you if you try to use a variable that has not been initialized.
 
 Some commonly recommended static analysis tools include:
 
-* clang-tidy
-* cpplint
-* cppcheck
-* SonarLint
-* Coverity
-* SonarQube
+- clang-tidy
+- cpplint
+- cppcheck
+- SonarLint
+- Coverity
+- SonarQube
 
 # Introduction to fundamental data types
 
@@ -2409,7 +2408,7 @@ Some commonly recommended static analysis tools include:
 
 Variables are names for a piece of memory that can be used to store information. Computers have random access memory (RAM) that is available for programs to use. When a variable is defined, a piece of that memory is set aside for that variable.
 
-The smallest unit of memory is a **binary digit** (also called a **bit**), which can hold a value of 0 or 1. 
+The smallest unit of memory is a **binary digit** (also called a **bit**), which can hold a value of 0 or 1.
 
 Memory is organized into sequential units called **memory addresses** (or **addresses** for short). Similar to how a street address can be used to find a given house on a street, the memory address allows us to find and access the contents of memory at a particular location.
 
@@ -2435,23 +2434,23 @@ All you need to do is pick a data type for your object that best matches your de
 
 C++ comes with built-in support for many different data types. These are called **fundamental data types**, but are often informally called **basic types**, **primitive types**, or **built-in types**.
 
-| Types | Category | Meaning |
-| :---: | :------: | :-----: |
-| float | Floating Point | a number with a fractional part |
-| double | " | " |
-| long double | " | " |
-| bool | Intergral(Boolean) | true or false |
-| char | Intergral(Character) | a single character or text |
-| wchar_t | " | " |
-| char8_t (C++20) | " | " |
-| char16_t (C++11) | " | " |
-| char32_t (C++11) | " | " |
-| short int | Intergral(Integer) | positive and negative whole numbers, including 0 |
-| int | " | " |
-| long int | " | " |
-| long long int (C++11) | " | " |
-| std::nullptr_t (C++11) | Null pointer | a null pointer |
-| void | Void | no type |
+|         Types          |       Category       |                     Meaning                      |
+| :--------------------: | :------------------: | :----------------------------------------------: |
+|         float          |    Floating Point    |         a number with a fractional part          |
+|         double         |          "           |                        "                         |
+|      long double       |          "           |                        "                         |
+|          bool          |  Intergral(Boolean)  |                  true or false                   |
+|          char          | Intergral(Character) |            a single character or text            |
+|        wchar_t         |          "           |                        "                         |
+|    char8_t (C++20)     |          "           |                        "                         |
+|    char16_t (C++11)    |          "           |                        "                         |
+|    char32_t (C++11)    |          "           |                        "                         |
+|       short int        |  Intergral(Integer)  | positive and negative whole numbers, including 0 |
+|          int           |          "           |                        "                         |
+|        long int        |          "           |                        "                         |
+| long long int (C++11)  |          "           |                        "                         |
+| std::nullptr_t (C++11) |     Null pointer     |                  a null pointer                  |
+|          void          |         Void         |                     no type                      |
 
 C++ also supports a number of other more complex types, called “**compound types**”.
 
@@ -2465,15 +2464,15 @@ In C++, the term “integer” is most often used to refer to the `int` data typ
 
 The term “integral” means “like an integer”. Most often, “integral” is used as part of the term “integral type”, which includes the broader set of types that are stored in memory as integers, even though their behaviors might vary. This includes bool, the integer types, and all the various character types.
 
-## The _t suffix
+## The \_t suffix
 
-Many of the types defined in newer versions of C++ (e.g. `std::nullptr_t`) use a _t suffix. This suffix means “type”, and it’s a common nomenclature applied to modern types.
+Many of the types defined in newer versions of C++ (e.g. `std::nullptr_t`) use a \_t suffix. This suffix means “type”, and it’s a common nomenclature applied to modern types.
 
-If you see something with a _t suffix, it’s probably a type. But many types don’t have a _t suffix, so this isn’t consistently applied.
+If you see something with a \_t suffix, it’s probably a type. But many types don’t have a \_t suffix, so this isn’t consistently applied.
 
 # Void
 
-Basically, **void** means “no type”. 
+Basically, **void** means “no type”.
 
 Void is our first example of an incomplete type. An **incomplete type** is a type that has been declared but not yet defined. The compiler knows about the existence of such types, but does not have enough information to determine how much memory to allocate for objects of that type. `void` is intentionally incomplete since it represents the lack of a type, and thus cannot be defined.
 
@@ -2529,34 +2528,34 @@ A single bit can hold 2 possible values, a 0, or a 1:
 
 | bit 0 |
 | ----- |
-| 0 |
-| 1 |
+| 0     |
+| 1     |
 
 2 bits can hold 4 possible values:
 
 | bit 0 | bit 1 |
 | ----- | ----- |
-| 0 | 0 |
-| 0 | 1 |
-| 1 | 0 |
-| 1 | 1 | 
+| 0     | 0     |
+| 0     | 1     |
+| 1     | 0     |
+| 1     | 1     |
 
 3 bits can hold 8 possible values:
 
 | bit 0 | bit 1 | bit 2 |
 | ----- | ----- | ----- |
-| 0 | 0 | 0 |
-| 0 | 0 | 1 |
-| 0 | 1 | 0 |
-| 0 | 1 | 1 |
-| 1 | 0 | 0 |
-| 1 | 0 | 1 |
-| 1 | 1 | 0 |
-| 1 | 1 | 1 |
+| 0     | 0     | 0     |
+| 0     | 0     | 1     |
+| 0     | 1     | 0     |
+| 0     | 1     | 1     |
+| 1     | 0     | 0     |
+| 1     | 0     | 1     |
+| 1     | 1     | 0     |
+| 1     | 1     | 1     |
 
 To generalize, an object with n bits (where n is an integer) can hold 2n (2 to the power of n, also commonly written 2^n) unique values. Therefore, with an 8-bit byte, a byte-sized object can hold 28 (256) different values. An object that uses 2 bytes can hold 2^16 (65536) different values!
 
-Thus, the size of the object puts a limit on the amount of unique values it can store -- objects that utilize more bytes can store a larger number of unique values. 
+Thus, the size of the object puts a limit on the amount of unique values it can store -- objects that utilize more bytes can store a larger number of unique values.
 
 Second, computers have a finite amount of free memory. Every time we define an object, a small portion of that free memory is used for as long as the object is in existence. Because modern computers have a lot of memory, this impact is usually negligible. However, for programs that need a large amount of objects or data (e.g. a game that is rendering millions of polygons), the difference between using 1 byte and 8 byte objects can be significant.
 
@@ -2566,38 +2565,38 @@ Second, computers have a finite amount of free memory. Every time we define an o
 
 Instead, the standard says the following:
 
-* An object must occupy at least 1 byte (so that each object has a distinct memory address).
-* A byte must be at least 8 bits.
-* he integral types `char`, `short`, `int`, `long`, and `long long` have a minimum size of 8, 16, 16, 32, and 64 bits respectively.
-* `char` and `char8_t` are exactly 1 byte (at least 8 bits).
+- An object must occupy at least 1 byte (so that each object has a distinct memory address).
+- A byte must be at least 8 bits.
+- he integral types `char`, `short`, `int`, `long`, and `long long` have a minimum size of 8, 16, 16, 32, and 64 bits respectively.
+- `char` and `char8_t` are exactly 1 byte (at least 8 bits).
 
 **NOTE**: Nomenclature - When we talk about the size of a type, we really mean the size of an instantiated object of that type.
 
 Presenting a simplified view, by making some reasonable assumptions that are generally true for modern architectures:
 
-* A byte is 8 bits.
-* Memory is byte addressable (we can access every byte of memory independently).
-* Floating point support is IEEE-754 compliant.
-* We are on a 32-bit or 64-bit architecture.
+- A byte is 8 bits.
+- Memory is byte addressable (we can access every byte of memory independently).
+- Floating point support is IEEE-754 compliant.
+- We are on a 32-bit or 64-bit architecture.
 
 Given the above assumptions, we can reasonably state the following:
 
-| Category | Type | Minimum Size | Typical Size |
-| -- | -- | -- | -- |
-| Boolean | bool | 1 byte | 1 byte |
-| Character | char | 1 byte(exactly) | 1 byte |
-| | wchar_t | 1 byte | 2 or 4 bytes |
-| | char8_t | 1 byte | 1 byte |
-| | char16_t | 2 bytes | 2 bytes |
-| | char32_t | 4 bytes | 4 bytes |
-| Integral | short | 2 bytes | 2 bytes |
-| | int | 2 bytes | 4 bytes |
-| | long | 4 bytes | 4 or 8 bytes |
-| | long long | 8 bytes | 8 bytes |
-| Floating point | float | 4 bytes | 4 bytes |
-| | double | 8 bytes | 8 bytes |
-| | long double | 8 bytes | 8, 12, or 16 bytes |
-| Pointer | std::nullptr_t | 4 bytes | 4 or 8 bytes |
+| Category       | Type           | Minimum Size    | Typical Size       |
+| -------------- | -------------- | --------------- | ------------------ |
+| Boolean        | bool           | 1 byte          | 1 byte             |
+| Character      | char           | 1 byte(exactly) | 1 byte             |
+|                | wchar_t        | 1 byte          | 2 or 4 bytes       |
+|                | char8_t        | 1 byte          | 1 byte             |
+|                | char16_t       | 2 bytes         | 2 bytes            |
+|                | char32_t       | 4 bytes         | 4 bytes            |
+| Integral       | short          | 2 bytes         | 2 bytes            |
+|                | int            | 2 bytes         | 4 bytes            |
+|                | long           | 4 bytes         | 4 or 8 bytes       |
+|                | long long      | 8 bytes         | 8 bytes            |
+| Floating point | float          | 4 bytes         | 4 bytes            |
+|                | double         | 8 bytes         | 8 bytes            |
+|                | long double    | 8 bytes         | 8, 12, or 16 bytes |
+| Pointer        | std::nullptr_t | 4 bytes         | 4 or 8 bytes       |
 
 For maximum portability, you shouldn’t assume that objects are larger than the specified minimum size.
 
@@ -2654,11 +2653,12 @@ int main()
 
 An **integer** is an integral type that can represent positive and negative whole numbers, including 0 (e.g. -2, -1, 0, 1, 2). C++ has 4 primary fundamental integer types available for use:
 
-| Type | Minimum Size | Note |
-| Short int | 16 bits | |
-| int | 16 bits | Typically 32 bits on modern architectures |
-| long int | 32 bits | |
-| long long int | 64 bits | |
+| Type          | Minimum Size | Note                                      |
+| ------------- | ------------ | ----------------------------------------- |
+| Short int     | 16 bits      |                                           |
+| int           | 16 bits      | Typically 32 bits on modern architectures |
+| long int      | 32 bits      |                                           |
+| long long int | 64 bits      |                                           |
 
 The key difference between the various integer types is that they have varying sizes -- the larger integers can hold bigger numbers.
 
@@ -2679,7 +2679,7 @@ long l;       // prefer "long" instead of "long int"
 long long ll; // prefer "long long" instead of "long long int"
 ```
 
-Although short int, long int, or long long int will work, we prefer the short names for these types (that do not use the int suffix). 
+Although short int, long int, or long long int will work, we prefer the short names for these types (that do not use the int suffix).
 
 The integer types can also take an optional signed keyword, which by convention is typically placed before the type name:
 
@@ -2689,6 +2689,7 @@ signed int si;
 signed long sl;
 signed long long sll;
 ```
+
 However, this keyword should not be used, as it is redundant, since integers are signed by default.
 
 ## Signed integer ranges
@@ -2697,10 +2698,11 @@ a variable with n bits can hold 2n possible values. But which specific values? W
 
 For example, an 8-bit signed integer has a range of -128 to 127. This means an 8-bit signed integer can store any integer value between -128 and 127 (inclusive) safely.
 
-| Size / Type | Range |
-| 8-bit signed | -128 to 127 |
-| 16-bit signed | -32,768 to 32,767 |
-| 32-bit signed | -2,147,483,648 to 2,147,483,647  |
+| Size / Type   | Range                                                   |
+| ------------- | ------------------------------------------------------- |
+| 8-bit signed  | -128 to 127                                             |
+| 16-bit signed | -32,768 to 32,767                                       |
+| 32-bit signed | -2,147,483,648 to 2,147,483,647                         |
 | 64-bit signed | -9,223,327,036,854,775,808 to 9,223,372,036,854,775,807 |
 
 For the math inclined, an n-bit signed variable has a range of **-(2n-1) to (2n-1)-1.**
@@ -2731,7 +2733,7 @@ int main()
 }
 ```
 
-In general, overflow results in information being lost, which is almost never desirable. 
+In general, overflow results in information being lost, which is almost never desirable.
 
 ## Integer division
 
@@ -2754,15 +2756,16 @@ A 1-byte unsigned integer has a range of 0 to 255. Compare this to the 1-byte si
 
 A table showing the range for unsigned integers:
 
-| Size/Type | Range |
-| 8 bit unsigned | 0 to 255 |
-| 16 bit unsigned | 0 to 65,535 |
-| 32 bit unsigned | 0 to 4,294,967,295 |
+| Size/Type       | Range                           |
+| --------------- | ------------------------------- |
+| 8 bit unsigned  | 0 to 255                        |
+| 16 bit unsigned | 0 to 65,535                     |
+| 32 bit unsigned | 0 to 4,294,967,295              |
 | 64 bit unsigned | 0 to 18,446,744,073,709,511,615 |
 
 An n-bit unsigned variable has a range of 0 to (2n)-1.
 
-* When no negative numbers are required, unsigned integers are well-suited for networking and systems with little memory, because unsigned integers can store more positive numbers without taking up extra memory.
+- When no negative numbers are required, unsigned integers are well-suited for networking and systems with little memory, because unsigned integers can store more positive numbers without taking up extra memory.
 
 ### Unsigned integer overflow
 
@@ -2779,17 +2782,348 @@ Example: Storing `280` in an 8-bit unsigned integer
 280 (decimal) = 100011000 (binary)  // This requires 9 bits.
 ```
 
-* An 8-bit integer can only store the last 8 bits:
-    ```s
-    100011000 → 00011000 (last 8 bits).
-    ```
-* `00011000` in binary is 2424 in decimal.
+- An 8-bit integer can only store the last 8 bits:
+  ```s
+  100011000 → 00011000 (last 8 bits).
+  ```
+- `00011000` in binary is 2424 in decimal.
 
 So, when `280` is stored in an 8-bit unsigned integer, it wraps around and becomes 2424.
 
 2. **Mathematical Explanation**:
 
- * Modular arithmetic is used:
-    *280 mod 256 = 24*
+- Modular arithmetic is used:
+  _280 mod 256 = 24_
 
 This is **not considered overflow** by the C++ standard because the result is **well-defined and predictable** under modular arithmetic rules.
+
+#### An instance of conversion of signed integer to unsigned integer leading to error
+
+```cpp
+#include <iostream>
+
+// assume int is 4 bytes
+int main()
+{
+    signed int s { -1 };
+    unsigned int u { 1 };
+
+    if (s < u) // -1 is implicitly converted to 4294967295, and 4294967295 < 1 is false
+        std::cout << "-1 is less than 1\n";
+    else
+        std::cout << "1 is less than -1\n"; // this statement executes
+
+    return 0;
+}
+```
+
+### When should you use unsigned numbers?
+
+- First, unsigned numbers are preferred when dealing with bit manipulation. They are also useful when well-defined wrap-around behavior is required (useful in some algorithms like encryption and random number generation).
+
+- Second, use of unsigned numbers is still unavoidable in some cases, mainly those having to do with array indexing.
+
+- If you’re developing for an embedded system (e.g. an Arduino) or some other processor/memory limited context, use of unsigned numbers is more common and accepted (and in some cases, unavoidable) for performance reasons.
+
+# Fixed-width integers
+
+C++ only guarantees that integer variables will have a minimum size -- but they could be larger, depending on the target system.
+
+For example, an `int` has a minimum size of 16-bits, but it’s typically 32-bits on modern architectures.
+
+If you assume an `int` is 32-bits because that’s most likely, then your program will probably misbehave on architectures where `int` is actually 16-bits (since you will probably be storing values that require 32-bits of storage in a variable with only 16-bits of storage, which will cause overflow or undefined behavior).
+
+For example:
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    int x { 32767 };        // x may be 16-bits or 32-bits
+    x = x + 1;              // 32768 overflows if int is 16-bits, okay if int is 32-bits
+    std::cout << x << '\n'; // what will this print?
+
+    return 0;
+}
+```
+
+In most cases, we only instantiate a small number of `int` variables at a time, and these are typically destroyed at the end of the function in which they are created. In such cases, wasting 2 bytes of memory per variable isn’t a concern (the limited range is a bigger issue). However, in cases where our program allocates millions of `int` variables, wasting 2 bytes of memory per variable can have a significant impact on the program’s overall memory usage.
+
+## Fixed-width integers
+
+To address the issue of not having a consistent size of integer on different architecture C++11 provides an alternate set of integer types that are guaranteed to be the same size on any architecture. Because the size of these integers is fixed, they are called **fixed-width integers**.
+
+The fixed-width integers are defined (in the <cstdint>\ header) as follows:
+
+| Name          | Fixed Size      | Fixed Range                                         |
+| ------------- | --------------- | --------------------------------------------------- |
+| std::int8_t   | 1 byte signed   | -128 to 127                                         |
+| std::uint8_t  | 1 byte unsigned | 0 to 255                                            |
+| std::int16_t  | 2 byte signed   | -32,768 to 32,767                                   |
+| std::uint16_t | 2 byte unsigned | 0 to 65,535                                         |
+| std::int32_t  | 4 byte signed   | -2,147,483,648 to 2,147,483,647                     |
+| std::unit32_t | 4 byte unsigned | 0 to 4,294,967,295                                  |
+| std::int64_t  | 8 byte signed   | -9,223,372,036,854,755,808 to 9,223,372,036,854,775 |
+| std::int64_t  | 8 byte unsigned | 0 to 18,446,744,073,709,551,615                     |
+
+NOTE: Warning: `std::int8_t` and `std::uint8_t` typically behave like chars
+
+## Fast and least integral types
+
+if you use a fixed-width integer, it may be slower than a wider type on some architectures. For example, if you need an integer that is guaranteed to be 32-bits, you might decide to use std::int32_t, but your CPU might actually be faster at processing 64-bit integers. However, just because your CPU can process a given type faster doesn’t mean your program will be faster overall -- modern programs are often constrained by memory usage rather than CPU, and the larger memory footprint may slow your program more than the faster CPU processing accelerates it. It’s hard to know without actually measuring.
+
+To help address this C++ also defines two alternative sets of integers that are guaranteed to exist.
+
+The fast types (std::int_fast#\_t and std::uint_fast#\_t) provide the fastest signed/unsigned integer type with a width of at least # bits (where # = 8, 16, 32, or 64). For example, `std::int_fast32_t` will give you the fastest signed integer type that’s at least 32-bits. By fastest, we mean the integral type that can be processed most quickly by the CPU.
+
+The least types (std::int_least#\_t and std::uint_least#\_t) provide the smallest signed/unsigned integer type with a width of at least # bits (where # = 8, 16, 32, or 64). For example, `std::uint_least32_t` will give you the smallest unsigned integer type that’s at least 32-bits.
+
+### Avoid the following when possible:
+
+- `short` and `long` integers (prefer a fixed-width integer type instead).
+- The fast and least integral types (prefer a fixed-width integer type instead).
+- Unsigned types for holding quantities (prefer a signed integer type instead).
+- The 8-bit fixed-width integer types (prefer a 16-bit fixed-width integer type instead).
+- Any compiler-specific fixed-width integers (for example, Visual Studio defines **int8, **int16, etc…)
+
+## std::size_t
+
+Consider:
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    std::cout << sizeof(int) << '\n'; // most likely returns 4 (can change based on different architecture)
+
+    return 0;
+}
+```
+
+`sizeof` returns a value of type `std::size_t`. std::size_t is an alias for an implementation-defined unsigned integral type. In other words, the compiler decides if `std::size_t` is an unsigned int, an unsigned long, an unsigned long long, etc… `std::size_t` is actually a typedef.
+
+`std::size_t` is defined in a number of different headers. If you need to use `std::size_t`, <cstddef> is the best header to include, as it contains the least number of other defined identifiers.
+
+For example:
+
+```cpp
+#include <cstddef>  // for std::size_t
+#include <iostream>
+
+int main()
+{
+    int x { 5 };
+    std::size_t s { sizeof(x) }; // sizeof returns a value of type std::size_t, so that should be the type of s
+    std::cout << s << '\n';
+
+    return 0;
+}
+```
+
+Much like an integer can vary in size depending on the system, `std::size_t` also varies in size. `std::size_t` is guaranteed to be unsigned and at least 16 bits, but on most systems will be equivalent to the address-width of the application. That is, for 32-bit applications, `std::size_t` will typically be a 32-bit unsigned integer, and for a 64-bit application, `std::size_t` will typically be a 64-bit unsigned integer.
+
+# Floating point numbers
+
+Integers are great for counting whole numbers, but sometimes we need to store very large (positive or negative) numbers, or numbers with a fractional component. A **floating point** type variable is a variable that can hold a number with a fractional component, such as 4320.0, -3.33, or 0.01226. The floating part of the name floating point refers to the fact that the decimal point can “float” -- that is, it can support a variable number of digits before and after the decimal point. Floating point data types are always signed (can hold positive and negative values).
+
+## C++ floating point types
+
+C++ has three fundamental floating point data types: a single-precision `float`, a double-precision `double`, and an extended-precision `long double`. As with integers, C++ does not define the actual size of these types.
+
+| Category       | C++ Type    | Typical Size       |
+| -------------- | ----------- | ------------------ |
+| floating point | float       | 4 bytes            |
+|                | double      | 8 bytes            |
+|                | long double | 8, 12, or 16 bytes |
+
+On modern architectures, floating-point types are conventionally implemented using one of the floating-point formats defined in the IEEE 754 standard.
+On modern architectures, floating-point types are conventionally implemented using one of the floating-point formats defined in the IEEE 754 standard (see https://en.wikipedia.org/wiki/IEEE_754). As a result, `float` is almost always 4 bytes, and `double` is almost always 8 bytes.
+
+On the other hand, `long double` is a strange type. On different platforms, its size can vary between 8 and 16 bytes, and it may or may not use an IEEE 754 compliant format.
+
+```cpp
+float f;
+double d;
+long double ld;
+```
+
+When using floating point literals, always include at least one decimal place (even if the decimal is 0). This helps the compiler understand that the number is a floating point number and not an integer.
+
+```cpp
+int a { 5 };      // 5 means integer
+double b { 5.0 }; // 5.0 is a floating point literal (no suffix means double type by default)
+float c { 5.0f }; // 5.0 is a floating point literal, f suffix means float type
+
+int d { 0 };      // 0 is an integer
+double e { 0.0 }; // 0.0 is a double
+```
+
+Note that by default, floating point literals default to type double. An f suffix is used to denote a literal of type float.
+
+## Printing floating point numbers
+
+```cpp
+#include <iostream>
+
+int main()
+{
+	std::cout << 5.0 << '\n';
+	std::cout << 6.7f << '\n';
+	std::cout << 9876543.21 << '\n';
+
+	return 0;
+}
+```
+
+Output:
+
+```
+5
+6.7
+9.87654e+06
+```
+
+In the first case, `std::cout` printed `5`, even though we typed in `5.0`. By default, `std::cout` will not print the fractional part of a number if the fractional part is 0.
+In the second case, the number prints as we expect.
+In the third case, it printed the number in scientific notation.
+
+## Floating point range
+
+| Format                                  | Range                                       | Precision                              |
+| --------------------------------------- | ------------------------------------------- | -------------------------------------- |
+| IEEE 754 single-precision (4 bytes)     | ±1.18 x 10^-38 to ±3.4 x 10^38 and 0.0      | 6-9 significant digits, typically 7    |
+| IEEE 754 double-precision (8 bytes)     | ±2.23 x 10^-308 to ±1.80 x 10^308 and 0.0   | 15-18 significant digits, typically 16 |
+| x87 extended-precision (80 bits)        | ±3.36 x 10^-4932 to ±1.18 x 10^4932 and 0.0 | 18-21 significant digits               |
+| IEEE 754 quadruple-precision (16 bytes) | ±3.36 x 10^-4932 to ±1.18 x 10^4932 and 0.0 | 33-36 significant digits               |
+
+The **precision** of a floating point type defines how many significant digits it can represent without information loss.
+
+The number of digits of precision a floating point type has depends on both the size (floats have less precision than doubles) and the particular value being stored (some values can be represented more precisely than others).
+
+## Outputting floating point values
+
+When outputting floating point numbers, std::cout has a default precision of 6 -- that is, it assumes all floating point variables are only significant to 6 digits (the minimum precision of a float), and hence it will truncate anything after that.
+
+The following program shows `std::cout` truncating to 6 digits:
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    std::cout << 9.87654321f << '\n';
+    std::cout << 987.654321f << '\n';
+    std::cout << 987654.321f << '\n';
+    std::cout << 9876543.21f << '\n';
+    std::cout << 0.0000987654321f << '\n';
+
+    return 0;
+}
+```
+
+Output:
+
+```
+9.87654
+987.654
+987654
+9.87654e+006
+9.87654e-005
+```
+
+We can override the default precision that std::cout shows by using an `output manipulator` function named `std::setprecision()`. **Output manipulators** alter how data is output, and are defined in the _iomanip_ header.
+
+```cpp
+#include <iomanip> // for output manipulator std::setprecision()
+#include <iostream>
+
+int main()
+{
+    std::cout << std::setprecision(17); // show 17 digits of precision
+    std::cout << 3.33333333333333333333333333333333333333f <<'\n'; // f suffix means float
+    std::cout << 3.33333333333333333333333333333333333333 << '\n'; // no suffix means double
+
+    return 0;
+}
+```
+
+```
+3.3333332538604736
+3.3333333333333335
+```
+
+Because we set the precision to 17 digits using `std::setprecision()`, each of the above numbers is printed with 17 digits. But, as you can see, the numbers certainly aren’t precise to 17 digits! And because floats are less precise than doubles, the float has more error.
+
+Precision issues don’t just impact fractional numbers, they impact any number with too many significant digits. Let’s consider a big number:
+
+```cpp
+#include <iomanip> // for std::setprecision()
+#include <iostream>
+
+int main()
+{
+    float f { 123456789.0f }; // f has 10 significant digits
+    std::cout << std::setprecision(9); // to show 9 digits in f
+    std::cout << f << '\n';
+
+    return 0;
+}
+```
+
+Output:
+
+```
+123456792
+```
+
+123456792 is greater than 123456789. The value 123456789.0 has 10 significant digits, but float values typically have 7 digits of precision (and the result of 123456792 is precise only to 7 significant digits). We lost some precision! When precision is lost because a number can’t be stored precisely, this is called a **rounding error**.
+
+## NaN and Inf
+
+IEEE 754 compatible formats additionally support some special values:
+
+- **Inf**, which represents infinity. Inf is signed, and can be positive (+Inf) or negative (-Inf).
+- **NaN**, which stands for “Not a Number”. There are several different kinds of NaN.
+- igned zero, meaning there are separate representations for “positive zero” (+0.0) and “negative zero” (-0.0).
+
+Formats that are not compatible with IEEE 754 may not support some (or any) of these values. In such cases, code that uses or generates these special values will produce implementation-defined behavior.
+
+Here’s a program showing all three:
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    double zero { 0.0 };
+
+    double posinf { 5.0 / zero }; // positive infinity
+    std::cout << posinf << '\n';
+
+    double neginf { -5.0 / zero }; // negative infinity
+    std::cout << neginf << '\n';
+
+    double z1 { 0.0 / posinf }; // positive zero
+    std::cout << z1 << '\n';
+
+    double z2 { -0.0 / posinf }; // negative zero
+    std::cout << z2 << '\n';
+
+    double nan { zero / zero }; // not a number (mathematically invalid)
+    std::cout << nan << '\n';
+
+    return 0;
+}
+```
+
+Output:
+
+```
+inf
+-inf
+0
+-0
+nan
+```
