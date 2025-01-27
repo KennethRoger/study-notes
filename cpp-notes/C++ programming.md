@@ -3127,3 +3127,527 @@ inf
 -0
 nan
 ```
+
+# Boolean values
+
+Boolean variables are variables that can have only two possible values: `true`, and `false`.
+
+To declare a Boolean variable, we use the keyword `bool`.
+
+```cpp
+bool b;
+```
+
+To initialize or assign a true or false value to a Boolean variable, we use the keywords true and false.
+
+```cpp
+bool b1 { true };
+bool b2 { false };
+b1 = false;
+bool b3 {}; // default initialize to false
+```
+
+Just as the unary minus operator (-) can be used to make an integer negative, the logical NOT operator (!) can be used to flip a Boolean value from true to false, or false to true:
+
+```cpp
+bool b1 { !true }; // b1 will be initialized with the value false
+bool b2 { !false }; // b2 will be initialized with the value true
+```
+
+Boolean values are not actually stored in Boolean variables as the words “true” or “false”. Instead, they are stored as integral values: `true` is stored as integer `1`, and `false` is stored as integer `0`. Similarly, when Boolean values are evaluated, they don’t actually evaluate to “true” or “false”. They evaluate to the integers `0` (false) or `1` (true). Because Booleans store integral values, they are considered to be an integral type.
+
+## Printing Boolean values
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    std::cout << true << '\n'; // true evaluates to 1
+    std::cout << !true << '\n'; // !true evaluates to 0
+
+    bool b {false};
+    std::cout << b << '\n'; // b is false, which evaluates to 0
+    std::cout << !b << '\n'; // !b is true, which evaluates to 1
+    return 0;
+}
+```
+
+If you want `std::cout` to print `true` or `false` instead of `0` or `1`, you can output `std::boolalpha`. This doesn’t output anything, but manipulates the way `std::cout` outputs bool values.
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    std::cout << true << '\n';
+    std::cout << false << '\n';
+
+    std::cout << std::boolalpha; // print bools as true or false
+
+    std::cout << true << '\n';
+    std::cout << false << '\n';
+    return 0;
+}
+```
+
+# Boolean return values
+
+Boolean values are often used as the return values for functions that check whether something is true or not. Such functions are typically named starting with the word is (e.g. isEqual) or has (e.g. hasCommonDivisor).
+
+For example:
+
+```cpp
+#include <iostream>
+
+// returns true if x and y are equal, false otherwise
+bool isEqual(int x, int y)
+{
+    return x == y; // operator== returns true if x equals y, and false otherwise
+}
+
+int main()
+{
+    std::cout << "Enter an integer: ";
+    int x{};
+    std::cin >> x;
+
+    std::cout << "Enter another integer: ";
+    int y{};
+    std::cin >> y;
+
+    std::cout << std::boolalpha; // print bools as true or false
+
+    std::cout << x << " and " << y << " are equal? ";
+    std::cout << isEqual(x, y) << '\n'; // will return true or false
+
+    return 0;
+}
+```
+
+# if statements
+
+An if statement allows us to execute one (or more) lines of code only if some condition is true.
+
+The simplest if statement takes the following form:
+
+```
+if (condition)
+    true_statement;
+```
+
+A **condition** (also called a **conditional expression**) is an expression that evaluates to a Boolean value.
+
+If the condition of an if statement evaluates to Boolean value true, then true_statement is executed. If the condition instead evaluates to Boolean value false, then true_statement is skipped.
+
+Example program using if statement:
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    std::cout << "Enter an integer: ";
+    int x {};
+    std::cin >> x;
+
+    if (x == 0)
+        std::cout << "The value is zero\n";
+
+    return 0;
+}
+```
+
+Output:
+
+```cpp
+Enter an integer: 0
+The value is zero
+```
+
+## If-else
+
+If-else takes the following form:
+
+```
+if (condition)
+    true_statement;
+else
+    false_statement;
+```
+
+If the condition evaluates to Boolean true, true_statement executes. Otherwise false_statement executes.
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    std::cout << "Enter an integer: ";
+    int x {};
+    std::cin >> x;
+
+    if (x == 0)
+        std::cout << "The value is zero\n";
+    else
+        std::cout << "The value is non-zero\n";
+
+    return 0;
+}
+```
+
+Output:
+
+```
+Enter an integer: 0
+The value is zero
+```
+
+```
+Enter an integer: 5
+The value is non-zero
+```
+
+## Chaining if statements
+
+Sometimes we want to check if several things are true or false in sequence. We can do so by chaining an if-statement (or if-else) to a prior if-else, like so:
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    std::cout << "Enter an integer: ";
+    int x {};
+    std::cin >> x;
+
+    if (x > 0)
+        std::cout << "The value is positive\n";
+    else if (x < 0)
+        std::cout << "The value is negative\n";
+    else
+        std::cout << "The value is zero\n";
+
+    return 0;
+}
+```
+
+The less than operator (<) is used to test whether one value is less than another. Similarly, the greater than operator (>) is used to test whether one value is greater than another. These operators both return Boolean values.
+
+Output from a few runs of this program:
+
+```
+Enter an integer: 4
+The value is positive
+```
+
+```
+Enter an integer: -3
+The value is negative
+```
+
+```
+Enter an integer: 0
+The value is zero
+```
+
+## Non-Boolean conditionals
+
+What happens if your conditional is an expression that does not evaluate to a Boolean value?
+
+In such a case, the conditional expression is converted to a Boolean value: non-zero values get converted to Boolean true, and zero-values get converted to Boolean false.
+
+Therefore, if we do something like this:
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    if (4) // nonsensical, but for the sake of example...
+        std::cout << "hi\n";
+    else
+        std::cout << "bye\n";
+
+    return 0;
+}
+```
+
+This will print “hi”, since 4 is a non-zero value that gets converted to Boolean true, causing the statement attached to the if to execute.
+
+## If-statements and early returns
+
+A return statement that is not the last statement in a function is called an early return. Such a statement will cause the function to return to the caller when the return statement is executed (before the function would otherwise return to the caller, hence, “early”).
+
+Early returns provide a way to conditionalize the return value of our function.
+
+```cpp
+#include <iostream>
+
+// returns the absolute value of x
+int abs(int x)
+{
+    if (x < 0)
+        return -x; // early return (only when x < 0)
+
+    return x;
+}
+
+int main()
+{
+    std::cout << abs(4) << '\n'; // prints 4
+    std::cout << abs(-3) << '\n'; // prints 3
+
+    return 0;
+}
+```
+
+# Chars
+
+The **char** data type was designed to hold a single character. A **character** can be a single letter, number, symbol, or whitespace.
+
+The char data type is an integral type, meaning the underlying value is stored as an integer. Similar to how a Boolean value `0` is interpreted as `false` and non-zero is interpreted as `true`, the integer stored by a `char` variable are intepreted as an `ASCII character`.
+
+Character literals are always placed between single quotes (e.g. ‘g’, ‘1’, ‘ ‘).
+
+Full table of ASCII characters:
+
+| Code | Symbol                          | Code | Symbol  | Code | Symbol | Code | Symbol      |
+| ---- | ------------------------------- | ---- | ------- | ---- | ------ | ---- | ----------- |
+| 0    | NUL (null)                      | 32   | (space) | 64   | @      | 96   | `           |
+| 1    | SOH (start of header)           | 33   | !       | 65   | A      | 97   | a           |
+| 2    | STX (start of text)             | 34   | ”       | 66   | B      | 98   | b           |
+| 3    | ETX (end of text)               | 35   | #       | 67   | C      | 99   | c           |
+| 4    | EOT (end of transmission)       | 36   | $       | 68   | D      | 100  | d           |
+| 5    | ENQ (enquiry)                   | 37   | %       | 69   | E      | 101  | e           |
+| 6    | ACK (acknowledge)               | 38   | &       | 70   | F      | 102  | f           |
+| 7    | BEL (bell)                      | 39   | ’       | 71   | G      | 103  | g           |
+| 8    | BS (backspace)                  | 40   | (       | 72   | H      | 104  | h           |
+| 9    | HT (horizontal tab)             | 41   | )       | 73   | I      | 105  | i           |
+| 10   | LF (line feed/new line)         | 42   | \*      | 74   | J      | 106  | j           |
+| 11   | VT (vertical tab)               | 43   | +       | 75   | K      | 107  | k           |
+| 12   | FF (form feed / new page)       | 44   | ,       | 76   | L      | 108  | l           |
+| 13   | CR (carriage return)            | 45   | -       | 77   | M      | 109  | m           |
+| 14   | SO (shift out)                  | 46   | .       | 78   | N      | 110  | n           |
+| 15   | SI (shift in)                   | 47   | /       | 79   | O      | 111  | o           |
+| 16   | DLE (data link escape)          | 48   | 0       | 80   | P      | 112  | p           |
+| 17   | DC1 (data control 1)            | 49   | 1       | 81   | Q      | 113  | q           |
+| 18   | DC2 (data control 2)            | 50   | 2       | 82   | R      | 114  | r           |
+| 19   | DC3 (data control 3)            | 51   | 3       | 83   | S      | 115  | s           |
+| 20   | DC4 (data control 4)            | 52   | 4       | 84   | T      | 116  | t           |
+| 21   | NAK (negative acknowledge)      | 53   | 5       | 85   | U      | 117  | u           |
+| 22   | SYN (synchronous idle)          | 54   | 6       | 86   | V      | 118  | v           |
+| 23   | ETB (end of transmission block) | 55   | 7       | 87   | W      | 119  | w           |
+| 24   | CAN (cancel)                    | 56   | 8       | 88   | X      | 120  | x           |
+| 25   | EM (end of medium)              | 57   | 9       | 89   | Y      | 121  | y           |
+| 26   | SUB (substitute)                | 58   | :       | 90   | Z      | 122  | z           |
+| 27   | ESC (escape)                    | 59   | ;       | 91   | [      | 123  | {           |
+| 28   | FS (file separator)             | 60   | <       | 92   | \      | 124  |             |
+| 29   | GS (group separator)            | 61   | =       | 93   | ]      | 125  | }           |
+| 30   | RS (record separator)           | 62   | >       | 94   | ^      | 126  | ~           |
+| 31   | US (unit separator)             | 63   | ?       | 95   | \      | \_   | DEL(delete) |
+
+Codes 0-31 and 127 are called the unprintable chars. These codes were designed to control peripheral devices such as printers (e.g. by instructing the printer how to move the print head). Most of these are obsolete now. If you try to print these chars, the results are dependent upon your OS (you may get some emoji-like characters).
+
+## Initializing chars
+
+You can initialize char variables using character literals:
+
+```cpp
+char ch2{ 'a' }; // initialize with code point for 'a' (stored as integer 97) (preferred)
+```
+
+You can initialize chars with integers as well, but this should be avoided if possible
+
+```cpp
+char ch1{ 97 }; // initialize with integer 97 ('a') (not preferred)
+```
+
+When using std::cout to print a char, std::cout outputs the char variable as an ASCII character:
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    std::cout << "Input a keyboard character: ";
+
+    char ch{};
+    std::cin >> ch;
+    std::cout << "You entered: " << ch << '\n';
+
+    return 0;
+}
+```
+
+variable ch can only hold 1 character. Consequently, only the first input character is extracted into variable ch. The rest of the user input is left in the input buffer that std::cin uses, and can be extracted with subsequent calls to std::cin.
+
+If you want to read in more than one char at a time (e.g. to read in a name, word, or sentence), you’ll want to use a string instead of a char. A string is a collection of sequential characters (and thus, a string can hold multiple symbols).
+
+## Extracting whitespace characters
+
+Because extracting input ignores leading whitespace, this can lead to unexpected results when trying to extract whitespace characters to a char variable:
+
+One simple way to address this is to use the std::cin.get() function to perform the extraction instead, as this function does not ignore leading whitespace
+
+## Escape sequences
+
+There are some sequences of characters in C++ that have special meaning. These characters are called **escape sequences**. An escape sequence starts with a ‘\’ (backslash) character, and then a following letter or number.
+
+Table of all of the escape sequences:
+
+| Name            | Symbol     | Meaning                                                                           |
+| --------------- | ---------- | --------------------------------------------------------------------------------- |
+| Alert           | \a         | Makes an alert, such as a beep                                                    |
+| Backspace       | \b         | Moves the cursor back one space                                                   |
+| Formfeed        | \f         | Moves the cursor to next logical page                                             |
+| Newline         | \n         | Moves cursor to next line                                                         |
+| Carriage return | \r         | Moves cursor to beginning of line                                                 |
+| Horizontal tab  | \t         | Prints a horizontal tab                                                           |
+| Vertical tab    | \v         | Prints a vertical tab                                                             |
+| Single quote    | \’         | Prints a single quote                                                             |
+| Double quote    | \”         | Prints a double quote                                                             |
+| Backslash       | \\         | Prints a backslash.                                                               |
+| Question mark   | \?         | Prints a question mark. No longer relevant. You can use question marks unescaped. |
+| Octal number    | \(number)  | Translates into char represented by octal                                         |
+| Hex number      | \x(number) | Translates into char represented by hex number                                    |
+
+## Difference between putting symbols in single and double quotes
+
+Text between single quotes is treated as a `char` literal, which represents a single character. For example, `'a'` represents the character `a`, `'+'` represents the character for the plus symbol, `'5'` represents the character `5` (not the number 5), and `'\n'` represents the newline character.
+
+Text between double quotes (e.g. “Hello, world!”) is treated as a C-style string literal, which can contain multiple characters. 
+
+## What about the other char types, wchar_t, char8_t, char16_t, and char32_t?
+
+Much like ASCII maps the integers 0-127 to American English characters, other character encoding standards exist to map integers (of varying sizes) to characters in other languages. The most well-known mapping outside of ASCII is the Unicode standard, which maps over 144,000 integers to characters in many different languages. Because Unicode contains so many code points, a single Unicode code point needs 32-bits to represent a character (called UTF-32). However, Unicode characters can also be encoded using multiple 16-bit or 8-bit characters (called UTF-16 and UTF-8 respectively).
+
+# Type conversion and static_cast
+
+## Implicit type conversion
+
+The process of converting a value from one type to another type is called **type conversion**.
+When the compiler does type conversion on our behalf without us explicitly asking, we call this **implicit type conversion**.
+
+## Type conversion produces a new value
+
+Even though it is called a conversion, a type conversion does not actually change the value or type of the value being converted. Instead, the value to be converted is used as input, and the conversion results in a new value of the target type.
+
+## Introduction to explicit type conversion via the static_cast operator
+
+C++ supports a second method of type conversion, called explicit type conversion. **Explicit type conversion** allow us (the programmer) to explicitly tell the compiler to convert a value from one type to another type, and that we take full responsibility for the result of that conversion. If such a conversion results in the loss of value, the compiler will not warn us.
+
+To perform an explicit type conversion, in most cases we’ll use the `static_cast` operator.
+
+```cpp
+static_cast<new_type>(expression)
+```
+
+Example:
+
+```cpp
+#include <iostream>
+
+void print(int x)
+{
+	std::cout << x << '\n';
+}
+
+int main()
+{
+	print( static_cast<int>(5.5) ); // explicitly convert double value 5.5 to an int
+
+	return 0;
+}
+```
+
+If we want to print the integral value instead of the char, we can do this by using `static_cast` to cast the value from a `char` to an `int`:
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    char ch{ 97 }; // 97 is ASCII code for 'a'
+    // print value of variable ch as an int
+    std::cout << ch << " has value " << static_cast<int>(ch) << '\n';
+
+    return 0;
+}
+```
+
+Output:
+```
+a has value 97
+```
+
+## Sign conversions using static_cast
+
+Signed integral values can be converted to unsigned integral values, and vice-versa, using a static cast.
+
+If the value being converted can be represented in the destination type, the converted value will remain unchanged (only the type will change).
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    unsigned int u1 { 5 };
+    // Convert value of u1 to a signed int
+    int s1 { static_cast<int>(u1) };
+    std::cout << s1 << '\n'; // prints 5
+
+    int s2 { 5 };
+    // Convert value of s2 to an unsigned int
+    unsigned int u2 { static_cast<unsigned int>(s2) };
+    std::cout << u2 << '\n'; // prints 5
+
+    return 0;
+}
+```
+
+Here’s an example of converting two values that are not representable in the destination type (assuming 32-bit integers):
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    int s { -1 };
+    std::cout << static_cast<unsigned int>(s) << '\n'; // prints 4294967295
+
+    unsigned int u { 4294967295 }; // largest 32-bit unsigned int
+    std::cout << static_cast<int>(u) << '\n'; // implementation-defined prior to C++20, -1 as of C++20
+
+    return 0;
+}
+```
+
+In cases where `std::int8_t` is treated as a char, input from the console can also cause problems:
+
+```cpp
+#include <cstdint>
+#include <iostream>
+
+int main()
+{
+    std::cout << "Enter a number between 0 and 127: ";
+    std::int8_t myInt{};
+    std::cin >> myInt;
+
+    std::cout << "You entered: " << static_cast<int>(myInt) << '\n';
+
+    return 0;
+}
+```
+
+A sample run of this program:
+
+```
+Enter a number between 0 and 127: 35
+You entered: 51
+```
+
+Here’s what’s happening. When `std::int8_t` is treated as a char, the input routines interpret our input as a sequence of characters, not as an integer. So when we enter `35`, we’re actually entering two chars, `'3'` and `'5'`. Because a char object can only hold one character, the `'3'` is extracted (the `'5'` is left in the input stream for possible extraction later). Because the char `'3'` has ASCII code point 51, the value `51` is stored in `myInt`, which we then print later as an int.
+
+In contrast, the other fixed-width types will always print and input as integral values.
