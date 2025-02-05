@@ -3516,7 +3516,7 @@ Table of all of the escape sequences:
 
 Text between single quotes is treated as a `char` literal, which represents a single character. For example, `'a'` represents the character `a`, `'+'` represents the character for the plus symbol, `'5'` represents the character `5` (not the number 5), and `'\n'` represents the newline character.
 
-Text between double quotes (e.g. “Hello, world!”) is treated as a C-style string literal, which can contain multiple characters. 
+Text between double quotes (e.g. “Hello, world!”) is treated as a C-style string literal, which can contain multiple characters.
 
 ## What about the other char types, wchar_t, char8_t, char16_t, and char32_t?
 
@@ -3577,6 +3577,7 @@ int main()
 ```
 
 Output:
+
 ```
 a has value 97
 ```
@@ -3651,3 +3652,553 @@ You entered: 51
 Here’s what’s happening. When `std::int8_t` is treated as a char, the input routines interpret our input as a sequence of characters, not as an integer. So when we enter `35`, we’re actually entering two chars, `'3'` and `'5'`. Because a char object can only hold one character, the `'3'` is extracted (the `'5'` is left in the input stream for possible extraction later). Because the char `'3'` has ASCII code point 51, the value `51` is stored in `myInt`, which we then print later as an int.
 
 In contrast, the other fixed-width types will always print and input as integral values.
+
+# Introduction to constants
+
+In programming, a **constant** is a value that may not be changed during the program’s execution.
+
+C++ supports two different kinds of constants:
+
+- **Named constants** are constant values that are associated with an identifier. These are also sometimes called **symbolic constants**.
+- **Literal constants** are constant values that are not associated with an identifier.
+
+## Types of named constants
+
+There are three ways to define a named constant in C++:
+
+- Constant variables
+- Object-like macros with substitution text
+- Enumerated constants
+
+### Constant variables
+
+A variable whose value cannot be changed after initialization is called a **constant variable**.
+
+To declare a constant variable, we place the `const` keyword (called a “const qualifier”) adjacent to the object’s type:
+
+```cpp
+const double gravity { 9.8 }; // preferred use of const before type
+int const sidesInSquare { 4 }; // "east const" style, okay but not preferred
+```
+
+The type of an object includes the const qualifier, so when we define `const double gravity { 9.8 };` the type of `gravity` is `const double`.
+
+**Note:** Const variables must be initialized when you define them, and then that value can not be changed via assignment
+
+Note that const variables can be initialized from other variables (including non-const ones):
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    std::cout << "Enter your age: ";
+    int age{};
+    std::cin >> age;
+
+    const int constAge { age }; // initialize const variable using non-const value
+
+    age = 5;      // ok: age is non-const, so we can change its value
+    constAge = 6; // error: constAge is const, so we cannot change its value
+
+    return 0;
+}
+```
+
+### Const function parameters
+
+Function parameters can be made constants via the const keyword:
+
+```cpp
+#include <iostream>
+
+void printInt(const int x)
+{
+    std::cout << x << '\n';
+}
+
+int main()
+{
+    printInt(5); // 5 will be used as the initializer for x
+    printInt(6); // 6 will be used as the initializer for x
+
+    return 0;
+}
+```
+
+Note that we did not provide an explicit initializer for our const parameter `x` -- the value of the argument in the function call will be used as the initializer for `x`.
+
+## Object-like macros with substitution text
+
+```cpp
+#include <iostream>
+
+#define MY_NAME "Alex"
+
+int main()
+{
+    std::cout << "My name is: " << MY_NAME << '\n';
+
+    return 0;
+}
+```
+
+The biggest issue is that macros don’t follow normal C++ scoping rules. Once a macro is #defined, all subsequent occurrences of the macro’s name in the current file will be replaced. If that name is used elsewhere, you’ll get macro substitution where you didn’t want it. This will most likely lead to strange compilation errors.
+
+## Nomenclature: type qualifiers
+
+A **type qualifier** (sometimes called a **qualifier** for short) is a keyword that is applied to a type that modifies how that type behaves. The `const` used to declare a constant variable is called a **const type qualifier** (or **const qualifier** for short).
+
+As of C++23, C++ only has two type qualifiers: `const` and `volatile`.
+
+The `volatile` qualifier is used to tell the compiler that an object may have its value changed at any time. This rarely-used qualifier disables certain types of optimizations.
+
+# Literals
+
+Literals are values that are inserted directly into the code. For example:
+
+```cpp
+return 5;                     // 5 is an integer literal
+bool myNameIsAlex { true };   // true is a boolean literal
+double d { 3.4 };             // 3.4 is a double literal
+std::cout << "Hello, world!"; // "Hello, world!" is a C-style string literal
+```
+
+Literals are sometimes called **literal constants** because their meaning cannot be redefined (5 always means the integral value 5).
+
+## The type of a literal
+
+Just like objects have a type, all literals have a type. The type of a literal is deduced from the literal’s value. For example, a literal that is a whole number (e.g. `5`) is deduced to be of type `int`.
+
+| Literal value        | Examples        | Default literal type | Note                                      |
+| -------------------- | --------------- | -------------------- | ----------------------------------------- |
+| integer value        | 5, 0, -3        | int                  |                                           |
+| boolean value        | true, false     | bool                 |                                           |
+| floating point value | 1.2, 0.0, 3.4   | double (not float!)  |                                           |
+| character            | ‘a’, ‘\n’       | char                 |                                           |
+| C-style string       | “Hello, world!” | const char[14]       | see C-style string literals section below |
+
+## Literal suffixes
+
+If the default type of a literal is not as desired, you can change the type of a literal by adding a suffix. Here are some of the more common suffixes:
+
+| Data type      | Suffix                                 | Meaning                                   |
+| -------------- | -------------------------------------- | ----------------------------------------- |
+| integral       | u or U                                 | unsigned int                              |
+| integral       | l or L                                 | long                                      |
+| integral       | ul, uL, Ul, UL, lu, lU, Lu, LU         | unsigned long                             |
+| integral       | ll or LL                               | long long                                 |
+| integral       | ull, uLL, Ull, ULL, llu, llU, LLu, LLU | unsigned long long                        |
+| integral       | z or Z                                 | The signed version of std::size_t (C++23) |
+| integral       | uz, uZ, Uz, UZ, zu, zU, Zu, ZU         | std::size_t (C++23)                       |
+| floating point | f or F                                 | float                                     |
+| floating point | l or L                                 | long double                               |
+| string         | s                                      | std::string                               |
+| string         | sv                                     | std::string_view                          |
+
+In most cases, suffixes aren’t needed (except for f).
+
+New programmers are often confused about why the following causes a compiler warning:
+
+```cpp
+float f { 4.1 }; // warning: 4.1 is a double literal, not a float literal
+```
+
+Because `4.1` has no suffix, the literal has type `double`, not `float`. When the compiler determines the type of a literal, it doesn’t care what you’re doing with the literal (e.g. in this case, using it to initialize a `float` variable). Since the type of the literal (`double`) doesn’t match the type of the variable it is being used to initialize (`float`), the literal value must be converted to a float so it can then be used to initialize variable `f`. Converting a value from a `double` to a `float` can result in a loss of precision, so the compiler will issue a warning.
+
+## String literals
+
+In programming, a **string** is a collection of sequential characters used to represent text (such as names, words, and sentences).
+
+Because strings are commonly used in programs, most modern programming languages include a fundamental string data type. For historical reasons, strings are not a fundamental type in C++. Rather, they have a strange, complicated type that is hard to work with. Such strings are often called **C strings** or **C-style strings**, as they are inherited from the C-language.
+
+There are two non-obvious things worth knowing about C-style string literals
+
+1. All C-style string literals have an implicit null terminator. Consider a string such as `"hello"`. While this C-style string appears to only have five characters, it actually has six: `'h'`, `'e'`, `'l‘`, `'l'`, `'o'`, and `'\0'` (a character with ASCII code 0). This trailing ‘\0’ character is a special character called a **null terminator**, and it is used to indicate the end of the string. A string that ends with a null terminator is called a **null-terminated string**.
+
+The reason for the null-terminator is also historical: it can be used to determine where the string ends.
+
+2. Unlike most other literals (which are values, not objects), C-style string literals are const objects that are created at the start of the program and are guaranteed to exist for the entirety of the program.
+
+Unlike C-style string literals, `std::string` and `std::string_view` literals create temporary objects. These temporary objects must be used immediately, as they are destroyed at the end of the full expression in which they are created.
+
+## Magic numbers
+
+A **magic number** is a literal (usually a number) that either has an unclear meaning or may need to be changed later.
+
+Avoid magic numbers in your code (use constexpr variables instead)
+
+# Numeral systems (decimal, binary, hexadecimal, and octal)
+
+In everyday life, we count using **decimal** numbers, where each numerical digit can be 0, 1, 2, 3, 4, 5, 6, 7, 8, or 9. Decimal is also called “base 10”, because there are 10 possible digits (0 through 9). By default, numbers in C++ programs are assumed to be decimal.
+
+In **binary**, there are only 2 digits: 0 and 1, so it is called “base 2”. In binary, we count like this: 0, 1, 10, 11, 100, 101, 110, 111, …
+
+Decimal and binary are two examples of **numeral systems**, which is a fancy name for a collection of symbols (e.g. digits) used to represent numbers. There are 4 main numeral systems available in C++. In order of popularity, these are: **decimal** (base 10), **binary** (base 2), **hexadecimal** (base 16), and **octal** (base 8).
+
+## Octal and hexadecimal literals
+
+Octal is base 8 -- that is, the only digits available are: 0, 1, 2, 3, 4, 5, 6, and 7. In Octal, we count like this: 0, 1, 2, 3, 4, 5, 6, 7, 10, 11, 12, … (note: no 8 and 9, so we skip from 7 to 10).
+
+| Decimal | 0   | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   | 9   | 10  | 11  |
+| ------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Octal   | 0   | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 10  | 11  | 12  | 13  |
+
+To use an octal literal, prefix your literal with a 0 (zero):
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    int x{ 012 }; // 0 before the number means this is octal
+    std::cout << x << '\n';
+    return 0;
+}
+```
+
+This program prints:
+
+```
+10
+```
+
+Because numbers are output in decimal by default, and 12 octal = 10 decimal.
+
+**Hexadecimal** is base 16. In hexadecimal, we count like this: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F, 10, 11, 12, …
+
+| Decimal     | 0   | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   | 9   | 10  | 11  | 12  | 13  | 14  | 15  |
+| ----------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Hexadeximal | 0   | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   | 9   | A   | B   | C   | D   | E   | F   |
+
+To use a hexadecimal literal, prefix your literal with `0x`:
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    int x{ 0xF }; // 0x before the number means this is hexadecimal
+    std::cout << x << '\n';
+    return 0;
+}
+```
+
+## Using hexadecimal to represent binary
+
+| Hexadecimal | 0    | 1    | 2    | 3    | 4    | 5    | 6    | 7    | 8    | 9    | A    | B    | C    | D    | E    | F    |
+| ----------- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| Binary      | 0000 | 0001 | 0010 | 0011 | 0100 | 0101 | 0110 | 0111 | 1000 | 1001 | 1010 | 1011 | 1100 | 1101 | 1110 | 1111 |
+
+Consider a 32-bit integer with binary value 0011 1010 0111 1111 1001 1000 0010 0110. Because of the length and repetition of digits, that’s not easy to read. In hexadecimal, this same value would be: 3A7F 9826, which is much more concise. For this reason, hexadecimal values are often used to represent memory addresses or raw data in memory (whose type isn’t known).
+
+## Binary literals
+
+Prior to C++14, there is no support for binary literals. However, hexadecimal literals provide us with a useful workaround (that you may still see in existing code bases):
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    int bin{};    // assume 16-bit ints
+    bin = 0x0001; // assign binary 0000 0000 0000 0001 to the variable
+    bin = 0x0002; // assign binary 0000 0000 0000 0010 to the variable
+    bin = 0x0004; // assign binary 0000 0000 0000 0100 to the variable
+    bin = 0x0008; // assign binary 0000 0000 0000 1000 to the variable
+    bin = 0x0010; // assign binary 0000 0000 0001 0000 to the variable
+    bin = 0x0020; // assign binary 0000 0000 0010 0000 to the variable
+    bin = 0x0040; // assign binary 0000 0000 0100 0000 to the variable
+    bin = 0x0080; // assign binary 0000 0000 1000 0000 to the variable
+    bin = 0x00FF; // assign binary 0000 0000 1111 1111 to the variable
+    bin = 0x00B3; // assign binary 0000 0000 1011 0011 to the variable
+    bin = 0xF770; // assign binary 1111 0111 0111 0000 to the variable
+
+    return 0;
+}
+```
+
+In C++14 onward, we can use binary literals by using the `0b` prefix:
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    int bin{};        // assume 16-bit ints
+    bin = 0b1;        // assign binary 0000 0000 0000 0001 to the variable
+    bin = 0b11;       // assign binary 0000 0000 0000 0011 to the variable
+    bin = 0b1010;     // assign binary 0000 0000 0000 1010 to the variable
+    bin = 0b11110000; // assign binary 0000 0000 1111 0000 to the variable
+
+    return 0;
+}
+```
+
+Digit separators
+
+Because long literals can be hard to read, C++14 also adds the ability to use a quotation mark (‘) as a digit separator.
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    int bin { 0b1011'0010 };  // assign binary 1011 0010 to the variable
+    long value { 2'132'673'462 }; // much easier to read than 2132673462
+
+    return 0;
+}
+```
+
+## Outputting values in decimal, octal, or hexadecimal
+
+By default, C++ outputs values in decimal. However, you can change the output format via use of the `std::dec`, `std::oct`, and `std::hex` I/O manipulators:
+
+```cpp
+#include <iostream>
+
+int main()
+{
+    int x { 12 };
+    std::cout << x << '\n'; // decimal (by default)
+    std::cout << std::hex << x << '\n'; // hexadecimal
+    std::cout << x << '\n'; // now hexadecimal
+    std::cout << std::oct << x << '\n'; // octal
+    std::cout << std::dec << x << '\n'; // return to decimal
+    std::cout << x << '\n'; // decimal
+
+    return 0;
+}
+```
+
+This prints:
+
+```
+12
+c
+c
+14
+12
+12
+```
+
+## Outputting values in binary
+
+Outputting values in binary is a little harder, as `std::cout` doesn’t come with this capability built-in. Fortunately, the C++ standard library includes a type called `std::bitset` that will do this for us (in the <bitset> header).
+
+To use `std::bitset`, we can define a `std::bitset` variable and tell `std::bitset` how many bits we want to store. The number of bits must be a compile-time constant. `std::bitset` can be initialized with an integral value (in any format, including decimal, octal, hex, or binary).
+
+```cpp
+#include <bitset> // for std::bitset
+#include <iostream>
+
+int main()
+{
+	// std::bitset<8> means we want to store 8 bits
+	std::bitset<8> bin1{ 0b1100'0101 }; // binary literal for binary 1100 0101
+	std::bitset<8> bin2{ 0xC5 }; // hexadecimal literal for binary 1100 0101
+
+	std::cout << bin1 << '\n' << bin2 << '\n';
+	std::cout << std::bitset<4>{ 0b1010 } << '\n'; // create a temporary std::bitset and print it
+
+	return 0;
+}
+```
+
+This prints:
+
+```
+11000101
+11000101
+1010
+```
+
+In the above code, this line:
+
+```
+std::cout << std::bitset<4>{ 0b1010 } << '\n'; // create a temporary std::bitset and print it
+```
+
+creates a temporary (unnamed) `std::bitset` object with 4 bits, initializes it with binary literal `0b1010`, prints the value in binary, and then discards the temporary object.
+
+### Outputting values in binary using the Format / Print Library
+
+In C++20 and C++23, we have better options for printing binary via the new Format Library (C++20) and Print Library (C++23):
+
+```cpp
+#include <format> // C++20
+#include <iostream>
+#include <print> // C++23
+
+int main()
+{
+    std::cout << std::format("{:b}\n", 0b1010);  // C++20, {:b} formats the argument as binary digits
+    std::cout << std::format("{:#b}\n", 0b1010); // C++20, {:#b} formats the argument as 0b-prefixed binary digits
+
+    std::println("{:b} {:#b}", 0b1010, 0b1010);  // C++23, format/print two arguments (same as above) and a newline
+
+    return 0;
+}
+```
+
+This prints:
+
+```
+1010
+0b1010
+1010 0b1010
+```
+
+# Refer optimisation in learncpp 5.4, constant expression in 5.5
+
+## Compile-time programming
+
+The C++ language provides ways for us to be explicit about what parts of code we want to execute at compile-time. The use of language features that result in compile-time evaluation is called compile-time programming.
+
+The following C++ features are the most foundational to compile-time programming:
+
+- Constexpr variables.
+- Constexpr functions.
+- Templates
+- static_assert
+
+All of these features have one thing in common: they make use of constant expressions.
+
+## Constant expressions
+
+An expression is “a non-empty sequence of literals, variables, operators, and function calls”. A **constant expression** is a non-empty sequence of literals, constant variables, operators, and function calls, all of which must be evaluatable at compile-time. The key difference is that in a constant expression, each part of the expression must be evaluatable at compile-time.
+An expression that is not a constant expression is often called a non-constant expression, and may informally be called a **runtime expression**
+
+Most commonly, constant expressions contain the following:
+
+- Literals (e.g. ‘5’, ‘1.2’)
+- Most operators with constant expression operands (e.g. `3 + 4`, `2 * sizeof(int)`).
+- Const integral variables with a constant expression initializer (e.g. `const int x { 5 };`). This is a historical exception -- in modern C++, constexpr variables are preferred.
+- Constexpr variables.
+- Constexpr function calls with constant expression arguments.
+
+Notably, the following cannot be used in a constant expression:
+
+- Non-const variables.
+- Const non-integral variables, even when they have a constant expression initializer (e.g. `const double d { 1.2 };`). To use such variables in a constant expression, define them as constexpr variables instead.
+- Operators with operands that are not constant expressions (e.g. x + y when x or y is not a constant expression, or `std::cout << "hello\n"` as `std::cout` is not a constant expression).
+- Function calls to non-constexpr functions (even when the return value is a constant expression).
+- Function parameters (even when the function is constexpr).
+- Operators `new`, `delete`, `throw`, `typeid`, and `operator`, (comma).
+
+An expression containing any of the above is a runtime expression.
+
+Examples of constant and non-constant expressions:
+
+```cpp
+#include <iostream>
+
+int getNumber()
+{
+    std::cout << "Enter a number: ";
+    int y{};
+    std::cin >> y; // can only execute at runtime
+
+    return y;      // return value only known at runtime
+}
+
+int five()
+{
+    return 5;      // return value known at compile-time
+}
+
+int main()
+{
+    // Literals can be used in constant expressions
+    5;                           // constant expression
+    1.2;                         // constant expression
+    "Hello world!";              // constant expression
+
+    // Most operators that have constant expression operands can be used in constant expressions
+    5 + 6;                       // constant expression
+    1.2 * 3.4;                   // constant expression
+    8 - 5.6;                     // constant expression (even though operands have different types)
+    sizeof(int) + 1;             // constant expression (sizeof can be determined at compile-time)
+
+    // Calls to non-constexpr functions can only be used in runtime expressions
+    getNumber();                 // runtime expression
+    five();                      // runtime expression (even though return value is constant expression)
+
+    // Operators without constant expression operands can only be used in runtime expressions
+    std::cout << 5;              // runtime expression (std::cout isn't a constant expression operand)
+
+    return 0;
+}
+```
+
+In the following snippet, we define a bunch of variables, and indicate whether they can be used in constant expressions:
+
+```cpp
+// Const integral variables with a constant expression initializer can be used in constant expressions:
+const int a { 5 };           // a is usable in constant expressions
+const int b { a };           // b is usable in constant expressions (a is a constant expression per the prior statement)
+const long c { a + 2 };      // c is usable in constant expressions (operator+ has constant expression operands)
+
+// Other variables cannot be used in constant expressions (even when they have a constant expression initializer):
+int d { 5 };                 // d is not usable in constant expressions (d is non-const)
+const int e { d };           // e is not usable in constant expressions (initializer is not a constant expression)
+const double f { 1.2 };      // f is not usable in constant expressions (not a const integral variable)
+```
+
+## The `constexpr` keyword
+
+With `constexpr` we can enlist the compiler’s help to ensure we get a compile-time constant variable where we desire one. A constexpr variable is always a compile-time constant. As a result, a constexpr variable must be initialized with a constant expression, otherwise a compilation error will result.
+
+### `const` vs `constexpr`
+
+- `const` means that the value of an object cannot be changed after initialization. The value of the initializer may be known at compile-time or runtime. The const object can be evaluated at runtime.
+- `constexpr` means that the object can be used in a constant expression. The value of the initializer must be known at compile-time. The constexpr object can be evaluated at runtime or compile-time.
+
+|         Term          |                                                                            Definition                                                                             |
+| :-------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| Compile-time constant |                        A value or non-modifiable object whose value must be known at compile time (e.g. literals and constexpr variables).                        |
+|       Constexpr       | Keyword that declares variables as compile-time constants (and functions that can be evaluated at compile-time). Informally, shorthand for “constant expression”. |
+|  Constant expression  |                       An expression that contains only compile-time constants and operators/functions that support compile-time evaluation.                       |
+|  Runtime expression   |                                                         An expression that is not a constant expression.                                                          |
+|   Runtime constant    |                                               A value or non-modifiable object that is not a compile-time constant.                                               |
+
+
+## constexpr Functions
+
+A **constexpr function** is a function that can be called in a constant expression. A constexpr function must evaluate at compile-time when the constant expression it is part of must evaluate at compile time (e.g. in the initializer of a constexpr variable). Otherwise, a constexpr function may be evaluated at either compile-time (if eligible) or runtime. To be eligible for compile-time execution, all arguments must be constant expressions.
+
+To make a constexpr function, the `constexpr` keyword is placed in the function declaration before the return type:
+
+```cpp
+#include <iostream>
+
+int max(int x, int y) // this is a non-constexpr function
+{
+    if (x > y)
+        return x;
+    else
+        return y;
+}
+
+constexpr int cmax(int x, int y) // this is a constexpr function
+{
+    if (x > y)
+        return x;
+    else
+        return y;
+}
+
+int main()
+{
+    int m1 { max(5, 6) };            // ok
+    const int m2 { max(5, 6) };      // ok
+    constexpr int m3 { max(5, 6) };  // compile error: max(5, 6) not a constant expression
+
+    int m1 { cmax(5, 6) };           // ok: may evaluate at compile-time or runtime
+    const int m2 { cmax(5, 6) };     // ok: may evaluate at compile-time or runtime
+    constexpr int m3 { cmax(5, 6) }; // okay: must evaluate at compile-time
+
+    return 0;
+}
+```
