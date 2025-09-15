@@ -4406,3 +4406,158 @@ int main()
     return 0;
 }
 ```
+# std::string_view
+
+```cpp
+#include <iostream>
+#include <string>
+
+int main()
+{
+    std::string s{ "Hello, world!" }; // s makes a copy of its initializer
+    std::cout << s << '\n';
+
+    return 0;
+}
+```
+
+When `s` is initialized, the C-style string literal `"Hello, world!"` is copied into memory allocated for `std::string s`. Unlike fundamental types, initializing and copying a `std::string` is slow.
+
+In the above program, all we do with s is print the value to the console, and then `s` is destroyed. We’ve essentially made a copy of “Hello, world!” just to print and then destroy that copy. That’s inefficient
+
+```cpp
+#include <iostream>
+#include <string>
+
+void printString(std::string str) // str makes a copy of its initializer
+{
+    std::cout << str << '\n';
+}
+
+int main()
+{
+    std::string s{ "Hello, world!" }; // s makes a copy of its initializer
+    printString(s);
+
+    return 0;
+}
+```
+
+Above is another inefficient example which takes it to next level.
+
+## std::string_view
+
+To address the issue with `std::string` being expensive to initialize (or copy), C++17 introduced `std::string_view` (which lives in the <string_view> header). `std::string_view` provides read-only access to an existing string (a C-style string, a `std::string`, or another `std::string_view`) without making a copy. Read-only means that we can access and use the value being viewed, but we can not modify it.
+
+```cpp
+#include <iostream>
+#include <string_view> // C++17
+
+// str provides read-only access to whatever argument is passed in
+void printSV(std::string_view str) // now a std::string_view
+{
+    std::cout << str << '\n';
+}
+
+int main()
+{
+    std::string_view s{ "Hello, world!" }; // now a std::string_view
+    printSV(s);
+
+    return 0;
+}
+```
+
+This program produces the same output as the prior one, but no copies of the string “Hello, world!” are made.
+
+When we initialize `std::string_view s` with C-style string literal `"Hello, world!"`, `s` provides read-only access to “Hello, world!” without making a copy of the string. When we pass `s` to `printSV()`, parameter `str` is initialized from `s`. This allows us to access “Hello, world!” through str, again without making a copy of the string.
+
+A `std::string_view` object can be initialized with a C-style string, a `std::string`, or another `std::string_view`
+
+C++ won’t allow implicit conversion of a `std::string_view` to a `std::string`. This is to prevent accidentally passing a `std::string_view` argument to a `std::string` parameter, and inadvertently making an expensive copy where such a copy may not be required.
+
+you can convert it explicitely by `static_cast`
+
+
+Assignment changes what the `std::string_view` is viewing
+
+Assigning a new string to a `std::string_view` causes the `std::string_view` to view the new string. It does not modify the prior string being viewed in any way.
+
+```cpp
+#include <iostream>
+#include <string>
+#include <string_view>
+
+int main()
+{
+    std::string name { "Alex" };
+    std::string_view sv { name }; // sv is now viewing name
+    std::cout << sv << '\n'; // prints Alex
+
+    sv = "John"; // sv is now viewing "John" (does not change name)
+    std::cout << sv << '\n'; // prints John
+
+    std::cout << name << '\n'; // prints Alex
+
+    return 0;
+}
+```
+
+
+### Literals for std::string_view
+
+Double-quoted string literals are C-style string literals by default. We can create string literals with type std::string_view by using a sv suffix after the double-quoted string literal. The `sv` must be lower case.
+
+constexpr `std::string_view`
+
+Unlike `std::string`, `std::string_view` has full support for constexpr
+
+```cpp
+#include <iostream>
+#include <string_view>
+
+int main()
+{
+    constexpr std::string_view s{ "Hello, world!" }; // s is a string symbolic constant
+    std::cout << s << '\n'; // s will be replaced with "Hello, world!" at compile-time
+
+    return 0;
+}
+```
+
+This makes `constexpr std::string_view` the preferred choice when string symbolic constants are needed.
+
+## View modification functions
+
+Because std::string_view is a view, it contains functions that let us modify our view. This does not modify the string being viewed in any way, just the view itself.
+
+* The `remove_prefix()` member function removes characters from the left side of the view.
+* The `remove_suffix()` member function removes characters from the right side of the view.
+
+```cpp
+#include <iostream>
+#include <string_view>
+
+int main()
+{
+	std::string_view str{ "Peach" };
+	std::cout << str << '\n';
+
+	// Remove 1 character from the left side of the view
+	str.remove_prefix(1);
+	std::cout << str << '\n';
+
+	// Remove 2 characters from the right side of the view
+	str.remove_suffix(2);
+	std::cout << str << '\n';
+
+	str = "Peach"; // reset the view
+	std::cout << str << '\n';
+
+	return 0;
+}
+```
+
+Due to this:
+A std::string_view may or may not be null-terminated. But
+A C-style string literal and a std::string are always null-terminated.

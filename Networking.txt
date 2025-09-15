@@ -1,0 +1,40 @@
+#Networking
+
+## HTTP
+
+* Hypertext Transfer Protocol (HTTP) is an application-layer protocol for transmitting hypermedia documents, such as HTML.
+* HTTP is a stateless protocol, meaning that the server does not keep any session data between two requests, although the later addition of cookies adds state to some client-server interactions.
+
+## Proxies
+
+Between the Web browser and the server, numerous computers and machines relay the HTTP messages. Due to the layered structure of the Web stack, most of these operate at the transport, network or physical levels, becoming transparent at the HTTP layer and potentially having a significant impact on performance. Those operating at the application layers are generally called proxies. 
+
+Some function of proxies
+* Caching
+* Filtering
+* Load balancing
+* Authentication
+* Logging
+
+## REST
+
+REST is an acronym for REpresentational State Transfer and an architectural style for distributed hypermedia systems. A Web API (or Web Service) conforming to the REST architectural style is called a REST API (or RESTful API).
+
+### REST princliples
+
+REST is based on some principle which promotes simplicity, scalability and statelessness. Six principles are:
+
+* Uniform interface - Defines a standardized way to interact with resources using HTTP methods (GET, POST, PUT, DELETE). Resources must be uniquely identified (e.g., via URLs), and the API structure should remain consistent.
+* Client-Server - Client and Server should be separate. Client handles interaction and server handles storage
+* Stateless - Each request and response should contain all information needed to conduct it. It shouldn't remember the state from their previous interaction subsequent req and res.
+* Cacheable - The serer should specify if a response is cacheable or not implicitely or explicitely. If it is cahcebale request to same resource should use the cache response until the specified time.
+* Layered System - Follow a layered system like MVC for separation of concerns.
+* Code on Demand - Servers can extend client functionality by sending executable code (e.g., JavaScript) — reducing the need for hardcoded logic on the client side.
+
+SOP, CORS and Preflight Request
+
+Origin = protocol + domain + port
+
+If the origin is different on any of these it is a cross origin. So to allow them you need to comply with CORS protocol 
+
+

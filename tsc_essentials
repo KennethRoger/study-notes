@@ -1,0 +1,114 @@
+generic type
+duck typing/structural typing
+static type checker
+type
+JS only  provides dynamic typing
+tooling in typescript
+erased types
+--noEmitOnError
+Downleveling
+--target _version_
+strict flag/ "strict": true
+noImplicitAny flag - doesnt allow any type
+strictNullChecks
+types - string, number, boolean, array, any, null, undefined, bigint, symbol, never, void, object, unknown, Function
+type annotation on variables
+inference rules
+parameter type annotation
+return type annotation
+Promise type
+contextual typing
+object type
+optional object type
+Union type
+narrow the union (narrowing)
+Type aliases (type keyword)
+Interface
+typescript called structurely typed type system
+type vs interface (type cannot be reoped to add properties, interface is extendable)
+anonymous types
+type assertion (using 'as' or assertion syntax '<>')
+literal types
+literal infernce
+non-null assertion operator (postfix !)
+type guards (special checks to verify the type eg: fn accepting mroe than one type parameter)
+narrowing (type guards narrows type to a more specific type thatn declared)
+truthiness narrowing, equality narrowing, in operator narrowing, instanceof narrowing
+control flow analysis
+type predicate (parameterName is Type)
+discriminated union
+exhaustive checking
+call signature -> something callable with properties
+generic function (fn something<Type>(para: Type[]): Type {}
+constrain the type parameter with extends clause
+guidelines for writing good generic functions
+optional parameter
+function overloads
+declaring this in function
+unknown - similar to the any type, but safer because it’s not legal to do anything with an unknown value
+return type never
+function type
+Rest parameter
+Rest arguments
+const context
+parameter destructuring
+readonly properties - a property marked as readonly can’t be written to during type-checking.
+index signatures
+excess property checking
+extending interface
+intersection (&)
+extends vs intersection
+Generic object types
+ReadonlyArray
+tuple types
+optional tuple elements
+tuple can have rest elements
+generic identity function
+type arguent inference
+generic function, generic class
+generic constraint:
+```
+interface Lengthwise {
+  length: number;
+}
+ 
+function loggingIdentity<Type extends Lengthwise>(arg: Type): Type {
+  console.log(arg.length); // Now we know it has a .length property, so no more error
+  return arg;
+}
+```
+class types in generics
+genric parameter defaults
+variance annotations
+keyof type operator
+typeof type operator
+indexed access type
+conditional types
+method signature
+infer keyword
+distributive conditional types
+Mapped types
+record type
+--strictPropertyInitialization
+classes with index signature
+implements clause
+Utility types
+decorators
+decorator factory
+decorator evaluation
+types of decorators: class, method, accessor, property, parameter
+mixins
+enums
+
+
+
+
+
+
+
+
+
+
+
+
+

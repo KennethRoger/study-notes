@@ -1,0 +1,527 @@
+Compiler vs Interpreter
+Object files
+Linker (linking)
+Library file
+C++
+Standard library
+Output file (can be executable (.exe) or a library file based on setup)
+Building (source file -> compile(obj file) -> Link -> exe)
+Build (executable file)
+Ide options - Build, Clean, Rebuild, Compile, Run/Start
+g++
+Precompiled headers
+Build configuration (Build target) - a release configuration and a debug configuration
+Compiler extensions - Compiler specific behaviour
+Diagnostic message (Diagnostic error and Diagnostic warning)
+Language standard
+
+Statement - probably end in semicolon
+Different kinds of statements
+• Declaration statements
+• Jump statements
+• Expression statements 
+• Compound statements 
+• Selection statements (conditionals)
+• Iteration statements (loops)
+• Try blocks
+Functions and main function
+Identifier
+Preprocessor directive (#include)
+Syntax
+Comments (//, /* */)
+Usage of comments -
+• Comments are best used to describe what a library, program, or function does
+• Within a library,program or function comments can be used to describe how the code is going to accomplish it's goal
+• At statement level, comments should be used to describe why the code is doing something
+Data - any information that can be moved, processed or stored by a computer
+Reading, changing and writing data programs produce results
+Value - A single piece of data
+RAM - Random Access Memory
+Object and variables
+Definition
+Variable assignment (assignment operator) - copy assignment
+Initialization, syntax called initializer
+Types of initialization: 
+• Default-initialization => int a;
+• Copy-initialization => int b = 5;
+• Direct-initialization => int c ( 6 );
+• Direct-list-initialization => int d { 7 }
+• Value-initialization => int e {}
+
+Other forms of initialization include:
+• Aggregate-initialization
+• Copy-list-initialization => int d = { 7 }
+• Reference initialization
+• Static-initialization, constant-initialization and dynamic-initialization
+• Zero-initialization => int e {}
+
+List-initialization also knows as uniform initialization or brace initialization
+
+Narrowing conversion
+[[maybe_unused]]
+
+Insertion operator(<<)
+std::cout is buffered
+Extraction operator (>>)
+
+
+Initializerd, uninitialised and assignment
+Undefined behaviour
+Implementation defined and unspecified behaviour
+Keywords and identifiers
+Literals
+Operators
+Operators 'arity'
+Types of arity: Unary, Binary, Ternary, Nullary
+Return value and side effects of operators
+Expression
+Expression statements
+Subexpression, full expressions and compound expressions
+
+Function
+Return value
+Arguments
+Paramenters
+Pass by value
+
+Local variables
+Object lifetime
+Allocation
+Deallocation
+Local scope (block scope)
+Out of scope vs going out of scope
+Temporary object
+Refactoring of a function(split into multiple sub functions)
+Forward declaration (Function prototype)
+Declaration and definition
+Pure declarations
+Naming collision (naming conflict)
+Scope region
+namespaces (namespace scope)
+The global namespace (the global scope)
+The std namespace
+Scope resolution operator (::)
+Qualified name (when an identifier includes namespace prefix)
+Using directive
+Preprocessor, preprocessing, translation unit
+Translation
+Preprocessor directives
+#include directive
+Macro defines (#define directive) -> object-like macros and function-like macros
+Conditional compilation preprocessor directives (#ifdef, #ifndef, #endif)
+#if 0 and #if 1
+#if, #elif
+
+Header file (eg: iostream)
+Transitive includes
+Header guard (
+  #ifdef UNIQUE_NAME
+  #define UNIQUE_NAME
+  // contents goes here
+  #endif
+)
+#pragma once
+
+Syntax and semantic errors
+std::cerr for debugging as it is not buffered
+Conditional debugging using preprocessor directives 
+Logger (std::clog, plog library)
+program state (state)
+Debugger (gdb - command line interface debugger, turbo debugger - with a guide, integrated debugger)
+Stepping
+Step into, Step over(next line in code::blocks), Step out
+Running (Run to cursor, continue, start)
+Breakpoint
+Set next statement
+
+Watch
+Call stack
+unit testing
+Static analysis tool(linters)
+Binary digit(bit)
+Memory addresses (addresses)
+Byte
+Fundamental data types (basic types, primitive types or built-in types)
+Data types (float, double, long, long double, bool, char, wchar_t, char8_t (C++20), char16_t (C++11), char32_t(C++11), short int, int, long int, long long int (C++11), std::nullptr_t (C++11), void)
+Compound types
+String
+The _t suffix
+
+Void
+Incomplete type
+Void function parameter
+
+Object Sizes
+sizeof operator
+Signed integers
+Overflow
+Integer division
+Unsigned integers
+Fixed width integer
+std::size_t
+Fast and least integral types
+Floating point numbers
+Output manipulators
+NaN, Inf
+
+
+__Topics where no notes are taken__
+
+Operator precedence
+Precedence level
+Operator associativity
+Value computation 
+Evaluation 
+Unary operators (Unary plus and Unary minus)
+Binary arithematic operators(+,-,*,/,%)
+Integer and Floating point division
+Arithematic assignment operators(+=, -=, *=, /=, %=)
+Modifying operators (assignment and increment and decrement operator)
+Remainder Operator(modulo or modulus operator)
+<cmath> header (pow())
+prefix and postfix increment and decrement operators
+side effect
+comma opearator
+conditional operator( ?: ) - aka arithematic if
+Relational operators(>, <, >=, <=, ==, !=)
+cmath - std::abs(), std::max()
+logical operators(NOT, AND, OR)
+short circuit evaluation
+De Morgan's law of logical NOT distribution
+XOR (a != b, a and b is boolean (or convert using static_cast<bool> or use !!a != !!b - as !a convert to opposite boolean but !!a converts it back to proper one))
+Bit flags
+<bitset>
+std::bitset -  test(), set(), reset(), flip(), size(), count(), all(), any(), none()
+bitwise operators ( <<(Left shift, >>(Right shift), ~(NOT), &(AND), |(OR), ^(XOR))
+Operator overloading
+Bit mask
+Compound statements (block or block statements)
+Outer block, inner block (nested block)
+Nesting level (nesting depth)
+user-defined namespace (program-defined namespace)
+For global namespace (::doSomething)
+namespace aliases
+scope
+in scope
+out of scope
+block scope
+storage duration (duration) - lifetime
+automatic storage duration
+local variables - automatic variables
+linkage
+global variables
+global namespace scope (global scope - file scope)
+statc duration
+static variables
+name hiding - shadowing
+local variables have no linkage
+internal linkage
+static
+storage class specifier (static, extern, mutable)
+external linkage
+external variables
+extern keyword
+static initialization (1. constant initializaion, zero initialization)
+dynamic initialization
+static initialization order fiasco
+overhead
+Inline expansion
+inline keyword
+Inline function (historic and modern use)
+inline variables
+automaitc duration
+static duration
+dynamic duration
+using declaration
+using directive
+function overloading
+Unnamed (anonymous) namespace
+inline namespace
+execution path("path" for short)
+straight-line program
+control flow statements (Conditional statements, Jumps, Function calls, Loops, Halts, Exceptions)
+branching
+if statement
+if constexpr
+dangling else
+null statement
+constexpr if statement
+switch statement (case label, default label)
+fallthrough
+Attributes
+[[fallthrough]]
+goto statement and statement label
+function scope
+spaghetti code
+while loop
+infinite loop
+loop variable
+iteration
+do while statements
+for loop (init-statement; condition; end-expression)
+off-by-one errors
+break statement
+continue statement
+early return
+halt
+std::exit()
+std::atexit()
+std::quick_exit()
+std::at_quick_exit()
+status code
+std::abort() (abnormal termination)
+std::terminate()
+algorithm
+stateful algorithm and stateless algorithm
+deterministic algorithm
+pseudo random number generator(PRNG)
+random seed (seeded)
+underseeded
+distribution uniformity
+period of PRNG
+<random> header
+Mersenne Twister (std::mt19937, std::mt19937_64)
+random number distribution
+uniform distribution(std::uniform_int_distribution)
+<chrono> (std::chrono:steady_clock::now())
+std::random_device
+
+scope creep
+software testing (software validation)
+unit testing
+informal testing, preserving your tests, automating test functions
+unit testing frammeworks
+integration test
+code coverage
+statement coverage
+branch coverage
+loop coverage (0, 1, 2 test)
+Common semantic errors: conditional logic error, infinite loop, off-by-oone error, incorrect operator precedence, precision issue with floating point, integer division, accidental null statements, assignement instead of equality, forgotting to use function call operator
+happy path and sad path in testing
+sentinel value
+non-recoverable error (fatal error)
+exceptions
+exception is thrown
+interactive and non-interactive applications
+non-interactive application have (tools and services)
+robust program
+input validation
+std::cerr
+externeous input
+std::numeric_limits<std::streamsize>::max()
+std::cin.eof(), std::cin.peek()
+end-of-file (EOF) error
+precondtions, invariants and postconditions
+assertion <cassert>
+assert macro
+#define NDEBUG
+#undef NDEBUG
+static assert
+
+Implicit type conversion (automatic type conversion or coercion)
+standard conversions (numeric promotions, numeric conversions, qualificaton conversions, value transformations, pointer conversions)
+narrowing conversions
+width of a data type (wider data type, narrower data type)
+numeric promotion - integral promotion and floating point promotions
+value-preserving conversion (safe conversion)
+Integral promotion and its rules
+numeric conversions (integral -> other integral, float -> other float, float -> integral, integral -> float, integral/float -> bool)
+unsafe conversion
+numeric converson categories (value-preserving conversion, reinterpretive conversion, lossy conversions)
+
+narrowing conversion
+usual arithematic conversions - its result is called common type
+priority list for arithematic conversion
+typeid() - included in <typeinfo>
+type casting operators
+casts 
+4 named casts - static_cast, dynamic_cast, const_cast, reinterpret_cast, C-style cast
+C-style cast - eg: (double)x
+function-style cast - alternative to c-style cast - eg: double(x)
+explicit type conversions
+
+using keyword - type aliases
+typedef keyword
+type deduction/ type inference
+auto keyword
+trailing syntax ( -> )
+function templates (auto for function parameter)
+
+function overloading
+overload resolution
+overload  differentiation - No. of parameters, Type of parameters
+functions type signature (does not include return type)
+name mangling
+
+11.3
+Overload resolution
+trivial conversions - 
+* lvalue to rvalue conversions
+* Qualification conversions(e.g. non-const to const)
+* non-reference to reference conversions
+Ambiguous error
+
+11.4
+= delete specifier - to delete specific function declaration - deleted function will participate in all stages of function overload resolution
+function template
+
+11.5
+Default argument (optional parameter - may have different interpretation in CPP)
+Three major conseqences of writing a default argument
+Rule - If a parameter is given a default argument, all subsequent parameters (to the right) must also be given default arguments.
+
+11.6
+C++ templates
+
+function template
+primary template - initial function template used to generate other functions
+instantiated functions - functions generated from the primary template
+placeholder types (type template paramters) - template types
+types of template parameters - type template parameter, Non-type template parameter, Template template parameter
+Template parameter declaration
+implicit instantiation
+function template instantiation
+specializatioon (function instance)
+Template argument deduction
+
+generic types
+generic programming
+abbreviated function templates
+partial ordering of function templates
+
+11.9
+Non-type template parameter - can be
+* An integral type
+* An enumeration type
+* std::nullptr_t
+* A floating point type (since C++20)
+* A pointer or refernce to an object
+* A pointer or reference to a function
+* A pointer or reference to a member function
+* A literal class type (since C++20)
+
+**11.9 needs understanding**
+F.1
+compile-time (symbolic) constants
+constexpr function
+
+F.3
+consteval (C++20)
+immediate functions
+std::is_constant_evaluated() / if consteval
+constant-evaluated context (constant context)
+variadic macros
+<type_traits>
+
+12.1
+compound data types (composite data types):
+* Functions
+* C-style Arrays
+* Pointer types:
+ - Pointer to object
+ - Pointer to function
+* Pointer to member types:
+ - Pointer to data member
+ - Pointer to member function
+* Reference types:
+ - L-value references
+ - R-value references
+* Enumerated types:
+ - Unscoped enumerations
+ - Scoped enumerations
+* Class types:
+ - Structs
+ - Classes
+ - Unions
+
+12.2
+Value category - lvalue, rvalue, glvalue, prvalue, xvalue
+move semantics
+lvalue - left value or locator value is an expression that evaluates to an identifiable object or function (or bit-field)
+Two types of lvalue - modifiable lvalue and non-modifiable lvalue (based on const)
+rvalue - right value is an expression that is not an lvalue. Produce temp values which are non-identifiable objects
+l-value to r-value conversion
+
+12.3
+refernce - an alias for an existing object
+lvalue refernces and rvalue references
+reference type (eg: int&)
+refernced type
+reference initialization
+bound - When a reference is initialized with an object (or function) - the process is called refernce binding
+referent - object or function being referenced
+reseated
+dangling reference
+refernce are not objects
+std::refernce_wrapper
+
+12.4
+l-value refernce to a const value (reference to const or const reference)
+
+12.5
+pass by value and pass by reference
+
+12.6
+rule of thumb for when to use pass by value or pass by reference
+
+12.7
+address-of operator(&)
+eg:-
+    int x { 10 };
+    int& ref { x }; (& used as reference)
+
+    std::cout << &x << '\n'; (& used as memory address)
+    std::cout << &ref;
+    return 0;
+& can also be used as bitwise operator (x & y)
+dereference operator(indirection operator - *) - wrap mem address in * and it returns the value stored
+address-of gets the address of an object, and dereference gets the object at an address.
+pointer(raw pointers or dumb pointers) - an object which holds mem address(typically of another variable) as its value
+pointer type
+eg:- 
+    int;  // a normal int
+    int&; // an lvalue reference to an int value
+
+    int*; // a pointer to an int value (holds the address of an integer value)
+wild pointer
+int main()
+{
+    int x{ 5 };
+    int* ptr{ &x };
+
+
+    *ptr = 6; // assigning the object at that memory address (derferencing)
+
+    std::cout << x << '\n'; // it literally changed the object at that address
+    std::cout << *ptr;
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
