@@ -173,7 +173,7 @@ Asynchronous communication patterns in microservices allow services to interact 
 * **Backpressure:** A mechanism to handle situations where a producer of messages outpaces the consumer's ability to process them. Preventing system overload, maintaining stability under varying load conditions.
 * **Polling:** Services periodically check a shared resource (e.g., a database or message queue) for new messages or tasks. Simple, low-complexity integration, batch processing.
 
-#### Dimensions of a system that impact the execution flow and the communication style of a system
+### Dimensions of a system that impact the execution flow and the communication style of a system
 1. **Consumers**
 Consumers of a system can be external programs, web/mobile interfaces, IoT devices etc. Consumer applications often deal with the server synchronously and expect the interface to support that. It is also desirable to mask the complexity of a distributed system with a unified interface for consumers. So it is imperative that our communication style allows us to facilitate it.
 
@@ -256,6 +256,41 @@ A hybrid approach combines synchronous and asynchronous communication, but this 
 
 
 * As Martin Fowler notes, once microservices are chosen, the execution flow style must be deliberate. Asynchronous communication with a sync-over-async wrapper works best for write-heavy systems, while synchronous communication is a better fit for read-heavy systems. For systems that are both read and write heavy but operate at moderate scale, synchronous design keeps things simpler. At very high scale and performance needs, asynchronous design with a CQRS pattern is the stronger option.
+
+### Microservice Division Criteria
+
+1. **Single Responsibility Principle (SRP)**
+Each microservice should have a single, well-defined responsibility. If a use case involves multiple distinct functionalities, it might be better to divide it into separate microservices, each handling one specific aspect of the use case.
+
+2. **Cohesion and Coupling**
+High cohesion within a microservice means that its components and logic are closely related and work together towards a common goal. On the other hand, low coupling ensures that microservices are loosely interconnected, reducing dependencies between them. Finding the right balance between cohesion and coupling is essential for creating maintainable and scalable microservices.
+
+3. **Domain-Driven Design (DDD)**
+DDD is an approach that emphasizes modeling software based on the business domain. Architects often analyze the domain model and identify bounded contexts (distinct, isolated portions of the domain) that can serve as natural boundaries for microservices.
+
+4. **Data Ownership and Access Patterns**
+If a use case primarily deals with specific data entities or resources, it may be logical to create a microservice responsible for managing that data and exposing relevant APIs for other microservices to interact with it.
+
+5. **Performance and Scalability Requirements**
+If certain use case components require higher scalability or performance, they might benefit from being separated into their own microservices. This way, those services can be scaled independently to meet demand.
+
+6. **Team Structure and Expertise**
+Organizational factors, such as team composition and expertise, can influence the microservices division. If different teams are responsible for different parts of the application, it might make sense to have microservices align with those team boundaries.
+
+7. **Third-Party Integrations**
+If a use case relies heavily on third-party services or APIs, architects may consider creating separate microservices to handle those integrations, isolating their concerns from the rest of the application.
+
+8. **Communication Overhead**
+Architects must be mindful of the communication overhead between microservices. If a use case requires constant communication between several services, it might impact performance, and a different division strategy may be needed.
+
+9. **Security and Compliance**
+Sensitive use case components might require their own microservices to ensure proper access controls and security measures.
+
+10. **Microservices and Design Granularity**
+When modeling and designing microservices, the granularity of individual service characteristics needs to be carefully assessed and defined in support of achieving the goals and benefits of microservices.
+
+**The ultimate goal is to achieve a modular and maintainable system that meets the organization's specific needs and supports future scalability and evolution.**
+
 # DOCKER
 
 Docker is an open platform for developing, shipping, and running applications. Docker enables you to separate your applications from your infrastructure so you can deliver software quickly. With Docker, you can manage your infrastructure in the same ways you manage your applications. By taking advantage of Docker's methodologies for shipping, testing, and deploying code, you can significantly reduce the delay between writing code and running it in production.
@@ -334,6 +369,45 @@ It's important to understand that Compose is a declarative tool - you simply def
 Use the `docker compose up` command to start the application
 
 Use the `docker compose down` command to remove everything
+
+## KAFKA
+
+* use Apache Kafka when it comes to enabling communication between producers and consumers using message-based topics.
+
+* fast, scalable, fault-tolerant, publish-subscribe messaging system
+
+* highly available and resilient to node failures and supports automatic recovery
+
+Core abstraction Kafka offers a Kafka broker, a Kafka Producer, and a Kafka Consumer. Kafka broker is a node on the Kafka cluster, its use is to persist and replicate the data. A Kafka Producer pushes the message into the message container called the Kafka Topic. Whereas a Kafka Consumer pulls the message from the Kafka Topic.
+
+There are two types of messaging patterns available, i.e. point to point and publish-subscribe (pub-sub) messaging system.
+
+* Point to Point Messaging System
+Here, messages are persisted in a queue. Although, a particular message can be consumed by a maximum of one consumer only, even if one or more consumers can consume the messages in the queue. Also, it makes sure that as soon as a consumer reads a message in the queue, it disappears from that queue.
+
+* Publish-Subscribe Messaging System
+
+Here, messages are persisted in a topic. In this system, Kafka Consumers can subscribe to one or more topic and consume all the messages in that topic. Moreover, message producers refer publishers and message consumers are subscribers here.
+
+### Kafka Components
+
+Using the following components, Kafka achieves messaging:
+
+a. **Kafka Topic**
+Basically, how Kafka stores and organizes messages across its system and essentially a collection of messages are Topics. In addition, we can replicate and partition Topics. Here, replicate refers to copies and partition refers to the division. Also, visualize them as logs wherein, Kafka stores messages. However, this ability to replicate and partitioning topics is one of the factors that enable Kafka’s fault tolerance and scalability.
+
+b. **Kafka Producer**
+It publishes messages to a Kafka topic.
+
+c. **Kafka Consumer**
+This component subscribes to a topic(s), reads and processes messages from the topic(s).
+
+d. **Kafka Broker**
+Kafka Broker manages the storage of messages in the topic(s). If Kafka has more than one broker, that is what we call a Kafka cluster.
+
+e. **Kafka Zookeeper**
+To offer the brokers with metadata about the processes running in the system and to facilitate health checking and broker leadership election, Kafka uses Kafka zookeeper.
+
 
 ## CI/CD
 
@@ -549,6 +623,30 @@ nginx consists of modules which are controlled by directives specified in the co
 Directives placed in the configuration file outside of any contexts are considered to be in the main context. The events and http directives reside in the main context, server in http, and location in server.
 
 The rest of a line after the # sign is considered a comment. 
+
+## SOLID PRINCIPLE
+
+SOLID is a set of five design principles that help developers create software that is easy to maintain, understand, and extend. Think of this like rules for building with lego bricks, and shouldn't fall apart when you add a new piece.
+
+**S - Single Responsibility Principle**
+A class should have only one job or one reason to change.
+ How I remember: A screwdriver is designed to drive screws. It's not also a hammer and a saw. If you make it do too many things, it becomes complex and hard to use properly.
+
+**O - Open/Closed Principle**
+Software should be open for extension, but closed for modification. Means one should be able to add new features without changing the existing, tested code.
+How I remember: Your phone is "closed" because you can't change its core operating system. But it's "open" cause one can extend its functionality by installing new apps from the Play/App Store without breaking the phone.
+
+**L - Liskov Substitution Principle**
+If you have a class A, any class B that inherits from A should be able to replace A without causing any errors. In short, child classes should be perfectly substitutable for their parent classes.
+How I remember: If you have a universal remote control designed for a "TV," it should work whether you're pointing it at a Samsung TV or an LG TV. You can substitute one type of TV for another, and the remote still works as expected
+
+**I - Interface Segregation Principle** 
+Clients should not be forced to depend on interfaces or methods they do not use. It's better to have many small, specific interfaces than one large, general-purpose one.
+How I remember: When you go to a restaurant, you don't get one giant menu with every food item in the world. You get a breakfast menu, a lunch menu, or a dessert menu. You only see what's relevant to you at that moment
+
+**D - Dependency Inversion Principle**
+High-level modules (your main business logic) should not depend on low-level modules (like a specific database or a payment gateway). Both should depend on abstractions (like a generic Database interface).
+How I remember: You don't wire a lamp directly into your house's electrical system. Instead, the lamp has a standard plug, and your wall has a standard socket. The plug and socket (the abstraction) allow you to switch out the lamp for any other appliance without rewiring your house
 
 ## CLEAN ARCHITECTURE
 
